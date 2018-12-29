@@ -126,7 +126,7 @@ $ make func-zip
 Create the function with the layer provided
 
 ```
-$ LAMBDA_LAYERS=arn:aws:lambda:ap-northeast-1:643758503024:layer:eks-kubectl-layer:1 make create-func
+$ LAMBDA_LAYERS=arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:1 make create-func
 ```
 
 response:
@@ -221,7 +221,7 @@ source libs.sh
 
 data=$(echo $1 | jq -r .data | base64 -d)
 
-echo "$data" | kubectl --kubeconfig=/tmp/kubeconfig apply -f - 2>&1
+echo "$data" | kubectl apply -f - 2>&1
 
 exit 0
 ```
