@@ -1,0 +1,13 @@
+#!/bin/bash
+# pahud/lambda-layer-kubectl for Amazon EKS
+
+# include the common-used shortcuts
+source libs.sh
+
+echo "[INFO] listing the nodes..."
+get_nodes
+
+echo "[INFO] listing the pods..."
+get_pods
+
+exit 0
