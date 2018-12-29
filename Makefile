@@ -34,8 +34,11 @@ func-zip:
 create-func:
 	@aws --region $(LAMBDA_REGION) lambda create-function \
 	--function-name $(LAMBDA_FUNC_NAME) \
+	--description "demo func for lambda-layer-kubectl" \
 	--runtime provided \
 	--role  $(LAMBDA_ROLE_ARN) \
+	--timeout 30 \
+	--layers $(LAMBDA_LAYERS) \
 	--handler main \
 	--zip-file fileb://func-bundle.zip 
 

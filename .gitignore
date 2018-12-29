@@ -1,0 +1,5 @@
+*.zip
+event.json
+kubectl
+aws-iam-authenticator
+lambda.output
