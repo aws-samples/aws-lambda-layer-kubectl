@@ -4,20 +4,17 @@
 # include the common-used shortcuts
 source libs.sh
 
-# echo "[INFO] listing the nodes..."
-# get_nodes
-
-# echo "[INFO] listing the pods..."
-# get_pods
-
-#echo "$1" 
-
 data=$(echo $1 | jq -r .data | base64 -d)
+input_yaml_urls=$(echo $1 | jq -r .input_yaml_urls)
+if [ ${#input_yaml_urls[@]} -gt 0 ]; then
+    for u in ${input_yaml_urls}
+    do
+        kubectl apply -f "$u" 2>&1
+    done
+fi
 
-# echo "=====[YAML]====="
-# echo "$data"
-# echo "=====[/YAML]====="
-
-echo "$data" | kubectl --kubeconfig=/tmp/kubeconfig apply -f - 2>&1
+if [ "$data" != "" ]; then
+    echo "$data" | kubectl apply -f - 2>&1
+fi
 
 exit 0
