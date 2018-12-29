@@ -1,0 +1,11 @@
+#!/bin/bash
+# pahud/lambda-layer-kubectl for Amazon EKS
+
+# include the common-used shortcuts
+source libs.sh
+
+data=$(echo $1 | jq -r .data | base64 -d)
+
+echo "$data" | kubectl --kubeconfig=/tmp/kubeconfig apply -f - 2>&1
+
+exit 0
