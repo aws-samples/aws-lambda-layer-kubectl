@@ -1,11 +1,13 @@
+export KUBECONFIG=/tmp/kubeconfig
+
 get_nodes(){
-    kubectl --kubeconfig=/tmp/kubeconfig get no
+    kubectl get no
 }
 
 get_pods(){
-    kubectl --kubeconfig=/tmp/kubeconfig get po
+    kubectl get po
 }
 
 get_all(){
-    kubectl --kubeconfig=/tmp/kubeconfig get all
+    kubectl get all
 }
