@@ -248,6 +248,18 @@ Response
 
 
 
+kubectl apply -f `REMOTE_URL` like this
+
+```
+$ INPUT_YAML_URLS="URL1 URL2 URL3" make invoke
+```
+
+e.g.
+
+![](images/04.png)
+
+
+
 I hope you find it useful and have fun with this project! Issues and PRs are very appreciated.
 
 
@@ -257,4 +269,4 @@ check [samples](./samples) directory
 
 # Todo
 
-- [ ] provide more samples
+- [x] provide more samples
