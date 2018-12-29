@@ -251,6 +251,9 @@ Response
 I hope you find it useful and have fun with this project! Issues and PRs are very appreciated.
 
 
+# More Samples
+check [samples](./samples) directory
+
 
 # Todo
 
