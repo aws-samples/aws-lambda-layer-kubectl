@@ -6,6 +6,6 @@ source libs.sh
 
 data=$(echo $1 | jq -r .data | base64 -d)
 
-echo "$data" | kubectl --kubeconfig=/tmp/kubeconfig apply -f - 2>&1
+echo "$data" | kubectl apply -f - 2>&1
 
 exit 0
