@@ -186,11 +186,23 @@ To `kubeclt get nodes` or `kubectl get pods`, just edit `main.sh`as below
 # include the common-used shortcuts
 source libs.sh
 
+# with shortcuts(defined in libs.sh)
 echo "[INFO] listing the nodes..."
 get_nodes
 
 echo "[INFO] listing the pods..."
 get_pods
+
+# or go straight with kubectl
+echo "[INFO] listing the nodes..."
+kubectl get no
+
+echo "[INFO] listing the pods..."
+kubectl get po
+
+# to specify different ns
+echo "[INFO] listing the pods..."
+kubectl -n kube-system get po
 
 exit 0
 ```
