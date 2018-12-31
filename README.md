@@ -175,7 +175,7 @@ Update the `aws-auth-cm.yaml` described in [Amazon EKS User Guide - getting star
 
 # Test and Validate
 
-To `kubeclt get nodes` or `kubectl get pods`, just edit `main.sh`as below
+To `kubeclt get nodes`, `kubectl get pods` or `kubectl apply -f REMOTE_URL` just edit `main.sh`as below
 
 
 
@@ -203,6 +203,12 @@ kubectl get po
 # to specify different ns
 echo "[INFO] listing the pods..."
 kubectl -n kube-system get po
+
+# kubectl apply -f REMOTE_URL
+kubectl apply -f http://SOME_REMOTE_URL
+
+# kubectl delete -f REMOTE_URL
+kubectl delete -f http://SOME_REMOTE_URL
 
 exit 0
 ```
