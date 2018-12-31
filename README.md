@@ -123,10 +123,10 @@ Build the function zip bundle for the function
 $ make func-zip
 ```
 
-Create the function with the layer provided
+Create the function with the layer ARN and default Amazon EKS cluster name(`cluster_name`) provided
 
 ```
-$ LAMBDA_LAYERS=arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:1 make create-func
+$ LAMBDA_LAYERS=arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:25 CLUSTER_NAME=eksnrt make create-func
 ```
 
 response:
@@ -136,23 +136,28 @@ response:
     "Layers": [
         {
             "CodeSize": 30058444, 
-            "Arn": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:1"
+            "Arn": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:25"
         }
     ], 
     "FunctionName": "eks-kubectl", 
-    "LastModified": "2018-12-29T07:44:58.724+0000", 
-    "RevisionId": "61f70658-c796-46b1-98cd-f02eb732df5d", 
+    "LastModified": "2018-12-31T12:11:12.996+0000", 
+    "RevisionId": "7550c7bf-b6d4-45f8-a95a-3e8801c9a185", 
     "MemorySize": 128, 
+    "Environment": {
+        "Variables": {
+            "cluster_name": "eksnrt"
+        }
+    }, 
     "Version": "$LATEST", 
-    "Role": "arn:aws:iam::xxxxxxxx:role/EKSRole4Lambda", 
+    "Role": "arn:aws:iam::xxxxxxxx:role/EKSLambdaRole", 
     "Timeout": 30, 
     "Runtime": "provided", 
     "TracingConfig": {
         "Mode": "PassThrough"
     }, 
-    "CodeSha256": "zArMRyONWqvIYh0dpHMQk0i6F7GkxBSI6T1WdP2rcJU=", 
+    "CodeSha256": "hB9gOEy0U0kX9+hml0mpr4cT/nE8fXKSO3f2/RU0CCA=", 
     "Description": "demo func for lambda-layer-kubectl", 
-    "CodeSize": 1342, 
+    "CodeSize": 1802, 
     "FunctionArn": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:function:eks-kubectl", 
     "Handler": "main"
 }
@@ -245,6 +250,13 @@ $ INPUT_YAML=nginx.yaml make invoke
 Response
 
 ![](./images/03.png)
+
+To specify different `cluster_name` with the default one in environment variable:
+
+```
+$ CLUSTER_NAME="another_cluster_name" INPUT_YAML=nginx.yaml make invoke
+```
+(see [#1](https://github.com/pahud/lambda-layer-kubectl/issues/1) for implementation details)
 
 
 
