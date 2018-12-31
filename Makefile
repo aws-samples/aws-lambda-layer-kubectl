@@ -46,6 +46,11 @@ update-func:
 	@aws --region $(LAMBDA_REGION) lambda update-function-code \
 	--function-name $(LAMBDA_FUNC_NAME) \
 	--zip-file fileb://func-bundle.zip
+	
+update-func-conf:
+	@aws --region $(LAMBDA_REGION) lambda update-function-configuration \
+	--function-name $(LAMBDA_FUNC_NAME) \
+	--layers $(LAMBDA_LAYERS)
 
 layer-all: layer-zip layer-upload layer-publish
 

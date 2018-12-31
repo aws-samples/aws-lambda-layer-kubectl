@@ -15,7 +15,7 @@ fi
 
 
 cat << EOF > "${2-event.json}"
-{"data":"$encoded", "input_yaml_urls": "${INPUT_YAML_URLS}"} 
+{"data":"$encoded", "cluster_name": "${CLUSTER_NAME}", "input_yaml_urls": "${INPUT_YAML_URLS}"} 
 EOF
 
 

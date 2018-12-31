@@ -7,11 +7,21 @@ set -euo pipefail
 
 export PATH=$PATH:/opt
 
+if [ -z ${cluster_name:-} ]; then
+    echo "missing cluster_name in lambda environment variables - using 'default' as the cluster_name"
+fi
+
+cluster_name=${cluster_name-default}
+
+
 update_kubeconfig(){
-    aws eks update-kubeconfig --name eksnrt  --kubeconfig /tmp/kubeconfig
+    aws eks update-kubeconfig --name "$1"  --kubeconfig /tmp/kubeconfig
 }
 
-update_kubeconfig
+update_kubeconfig "$cluster_name" && \
+# for container-reuse we save cluster_name in /tmp/.env.config
+echo "cluster_name=${cluster_name}" > /tmp/.env.config
+
 
 # Processing
 while true
