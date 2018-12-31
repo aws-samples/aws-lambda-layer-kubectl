@@ -22,4 +22,10 @@ kubectl get po
 echo "[INFO] listing the pods..."
 kubectl -n kube-system get po
 
+# kubectl apply -f REMOTE_URL
+kubectl apply -f http://SOME_REMOTE_URL
+
+# kubectl delete -f REMOTE_URL
+kubectl delete -f http://SOME_REMOTE_URL
+
 exit 0
