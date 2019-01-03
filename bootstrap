@@ -33,8 +33,7 @@ do
 
   # Execute the handler function from the script
   RESPONSE=$(./$(echo "$_HANDLER" | cut -d. -f2).sh "$EVENT_DATA")
-  #RESPONSE=$(get_nodes; get_pods; get_all)
-  #RESPONSE=$(ls -alh)
+
 
   echo "=========[RESPONSE]======="
   echo "$RESPONSE"
