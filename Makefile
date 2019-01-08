@@ -13,6 +13,9 @@ download:
 	bash utils/download.sh
 	chmod +x aws-iam-authenticator kubectl
 	mv aws-iam-authenticator kubectl ./layer/kubectl/
+	
+awscli:
+	bash build-awscli.sh
 
 layer-zip:
 	cd ./layer && zip -r ../layer.zip *
@@ -67,6 +70,6 @@ delete-func:
 	@aws --region $(LAMBDA_REGION) lambda delete-function --function-name $(LAMBDA_FUNC_NAME)
 
 clean:
-	rm -f lambda.output event.json *.zip aws-iam-authenticator kubectl
+	rm -rf lambda.output event.json *.zip layer/
 
 
