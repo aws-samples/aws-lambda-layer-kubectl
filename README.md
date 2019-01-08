@@ -11,6 +11,52 @@
 - [x] Straight `kubectl` against Amazon EKS without `client-go` or python client SDK for K8s. Zero code experience required. Just shell script.
 - [x] Invoke your Lambda function with any `yaml` file from local and it can `kubectl apply -f` for you to apply it on Amazon EKS.
 
+# Layer structure
+
+You got the layer structure as below under `/opt` in lambda custom runtime:
+
+```
+├── awscli
+│   ├── aws
+│   ├── awscli
+│   ├── awscli-1.16.85-py2.7.egg-info
+│   ├── bin
+│   ├── botocore
+│   ├── botocore-1.12.75-py2.7.egg-info
+│   ├── colorama
+│   ├── colorama-0.3.9-py2.7.egg-info
+│   ├── concurrent
+│   ├── dateutil
+│   ├── docutils
+│   ├── docutils-0.14-py2.7.egg-info
+│   ├── easy_install.py
+│   ├── easy_install.pyc
+│   ├── futures-3.2.0-py2.7.egg-info
+│   ├── jmespath
+│   ├── jmespath-0.9.3-py2.7.egg-info
+│   ├── jq
+│   ├── pkg_resources
+│   ├── pyasn1
+│   ├── pyasn1-0.4.5-py2.7.egg-info
+│   ├── python_dateutil-2.7.5-py2.7.egg-info
+│   ├── PyYAML-3.13-py2.7.egg-info
+│   ├── rsa
+│   ├── rsa-3.4.2-py2.7.egg-info
+│   ├── s3transfer
+│   ├── s3transfer-0.1.13-py2.7.egg-info
+│   ├── site-packages
+│   ├── six-1.12.0-py2.7.egg-info
+│   ├── six.py
+│   ├── six.pyc
+│   ├── urllib3
+│   ├── urllib3-1.24.1-py2.7.egg-info
+│   ├── wheel
+│   ├── wheel-0.29.0.dist-info
+│   └── yaml
+└── kubectl
+    ├── aws-iam-authenticator
+    └── kubectl
+```
 
 
 # HOWTO
@@ -35,14 +81,21 @@ or just
 $ git clone https://github.com/pahud/lambda-layer-kubectl.git
 ```
 
-2. Download required binaries including `kubectl` and `aws-iam-authenticator` 
+2. Download required binaries including `kubectl` and `aws-iam-authenticator` into `./layer/kubectl/`
 
 
 ```
 $ make download
 ```
-
 (this may take a moment to complete the download)
+
+
+3. Generaet `aws` CLI into `./layer/awscli/` from scratch
+
+```
+$ make awscli
+```
+(this will generate `./layer/awscli` for you)
 
 3. edit the `Makefile`
 
