@@ -9,22 +9,24 @@ LAMBDA_FUNC_NAME ?= eks-kubectl
 LAMBDA_ROLE_ARN ?= arn:aws:iam::903779448426:role/EKSLambdaDrainer
 
 download:
+	mkdir -p ./layer/kubectl
 	bash utils/download.sh
 	chmod +x aws-iam-authenticator kubectl
+	mv aws-iam-authenticator kubectl ./layer/kubectl/
 
 layer-zip:
-	chmod +x kubectl aws-iam-authenticator
-	zip -r layer.zip kubectl aws-iam-authenticator bin; ls -alh layer.zip
+	cd ./layer && zip -r ../layer.zip *
+	# zip -r layer.zip kubectl aws-iam-authenticator bin; ls -alh layer.zip
 	
 layer-upload:
-	@aws s3 cp layer.zip s3://$(S3BUCKET)/layer.zip
+	@aws s3 cp layer.zip s3://$(S3BUCKET)/$(LAYER_NAME)-layer.zip
 	
 layer-publish:
 	@aws --region $(LAMBDA_REGION) lambda publish-layer-version \
 	--layer-name $(LAYER_NAME) \
 	--description $(LAYER_DESC) \
 	--license-info "MIT" \
-	--content S3Bucket=$(S3BUCKET),S3Key=layer.zip \
+	--content S3Bucket=$(S3BUCKET),S3Key=$(LAYER_NAME)-layer.zip \
 	--compatible-runtimes provided
 
 func-zip:
@@ -58,8 +60,11 @@ func-all: func-zip update-func
 
 invoke:
 	bash genevent.sh $(INPUT_YAML) $(INPUT_JSON)
-	@aws --region $(LAMBDA_REGION) lambda invoke --function-name eks-kubectl \
+	@aws --region $(LAMBDA_REGION) lambda invoke --function-name $(LAMBDA_FUNC_NAME) \
 	--payload file://$(INPUT_JSON) lambda.output --log-type Tail | jq -r .LogResult | base64 -d
+	
+delete-func:
+	@aws --region $(LAMBDA_REGION) lambda delete-function --function-name $(LAMBDA_FUNC_NAME)
 
 clean:
 	rm -f lambda.output event.json *.zip aws-iam-authenticator kubectl
