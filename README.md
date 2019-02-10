@@ -35,14 +35,14 @@ or just
 $ git clone https://github.com/pahud/lambda-layer-kubectl.git
 ```
 
-2. Download required binaries including `kubectl` and `aws-iam-authenticator` 
+2. build the `layer.zip` bundle
 
 
 ```
-$ make download
+$ make build
 ```
 
-(this may take a moment to complete the download)
+(this may take a moment to complete)
 
 3. edit the `Makefile`
 
@@ -85,33 +85,38 @@ Please note your IAM role for Lambda will need `eks:DescribeCluster` as well as 
 4. Build the Layer
 
 ```
-$ make layer-all
+$ make sam-layer-package sam-layer-deploy
 ```
 
 This will bundle the layer and publish a version for this layer. You should see the return as below:
 
 ```
-{
-    "LayerVersionArn": "arn:aws:lambda:ap-northeast-1:xxxxxxxxxx:layer:eks-kubectl-layer:1", 
-    "Description": "eks-kubectl-layer", 
-    "CreatedDate": "2018-12-29T07:26:27.714+0000", 
-    "LayerArn": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer", 
-    "Content": {
-        "CodeSize": 30058444, 
-        "CodeSha256": "T5ayJCuQrTQ80zwtforJpglUV5vGr/Kwz48DJsu8Q4k=", 
-        "Location": "..."
-    }, 
-    "Version": 1, 
-    "CompatibleRuntimes": [
-        "provided"
-    ], 
-    "LicenseInfo": "MIT"
-}
+$ make sam-layer-package sam-layer-deploy
+Uploading to 2494b2751b38bc31f3afa88596917ec0  31986657 / 31986657.0  (100.00%)
+Successfully packaged artifacts and wrote output template to file sam-layer-packaged.yaml.
+Execute the following command to deploy the packaged template
+aws cloudformation deploy --template-file /home/samcli/workdir/sam-layer-packaged.yaml --stack-name <YOUR STACK NAME>
+[OK] Now type 'make sam-layer-deploy' to deploy your Lambda layer with SAM
+
+Waiting for changeset to be created..
+Waiting for stack create/update to complete
+Successfully created/updated stack - eks-kubectl-layer-stack
+# print the cloudformation stack outputs
+aws --region ap-northeast-1 cloudformation describe-stacks --stack-name "eks-kubectl-layer-stack" --query 'Stacks[0].Outputs'
+[
+    {
+        "Description": "ARN for the published Layer version", 
+        "ExportName": "LayerVersionArn-eks-kubectl-layer-stack", 
+        "OutputKey": "LayerVersionArn", 
+        "OutputValue": "arn:aws:lambda:ap-northeast-1:xxxxxxxxx:layer:layer-eks-kubectl-layer-stack:2"
+    }
+]
+[OK] Layer version deployed.
 ```
 
 OK. Now your layer is ready. Very simple, isn't it?  
 
-Please copy the value of `LayerVersionArn` above.
+Please copy the value of `OutputValue` above.
 
 
 
