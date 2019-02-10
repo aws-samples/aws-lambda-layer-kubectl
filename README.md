@@ -91,13 +91,6 @@ $ make build
 (this may take a moment to complete)
 
 
-3. Generaet `aws` CLI into `./layer/awscli/` from scratch
-
-```
-$ make awscli
-```
-(this will generate `./layer/awscli` for you)
-
 3. edit the `Makefile`
 
 | Name                 | Description                                                  | required to update |
