@@ -276,7 +276,7 @@ exit 0
 And publish your function again
 
 ```
-$ make func-prep sam-package sam-deploy
+$ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
 ```
 
 Invoke
@@ -314,7 +314,7 @@ exit 0
 Update the function
 
 ```
-$ make func-prep sam-package sam-deploy
+$ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
 ```
 
 

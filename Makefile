@@ -2,12 +2,15 @@
 
 LAYER_NAME ?= eks-kubectl-layer
 LAYER_DESC ?= eks-kubectl-layer
-INPUT_JSON ?= event.json
+# INPUT_JSON ?= event.json
 S3BUCKET ?= pahud-tmp-nrt
 LAMBDA_REGION ?= ap-northeast-1
 LAMBDA_FUNC_NAME ?= eks-kubectl
 LAMBDA_ROLE_ARN ?= arn:aws:iam::903779448426:role/EKSLambdaDrainer
 CLUSTER_NAME ?= default
+ifdef INPUT_YAML
+INPUT_JSON = event.json
+endif
 
 
 .PHONY: build 
@@ -126,9 +129,16 @@ func-all: func-zip update-func
 
 .PHONY: invoke
 invoke:
-	bash genevent.sh $(INPUT_YAML) $(INPUT_JSON)
+ifdef INPUT_YAML
+	@bash genevent.sh $(INPUT_YAML) $(INPUT_JSON)
 	@aws --region $(LAMBDA_REGION) lambda invoke --function-name $(LAMBDA_FUNC_NAME) \
 	--payload file://$(INPUT_JSON) lambda.output --log-type Tail | jq -r .LogResult | base64 -d
+else
+	@aws --region $(LAMBDA_REGION) lambda invoke --function-name $(LAMBDA_FUNC_NAME) \
+	--payload '{"data":""}' lambda.output --log-type Tail | jq -r .LogResult | base64 -d	
+endif
+
+
 
 .PHONY: delete-func	
 delete-func:

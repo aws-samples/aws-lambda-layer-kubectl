@@ -20,7 +20,7 @@ update_kubeconfig(){
 
 update_kubeconfig "$cluster_name" && \
 # for container-reuse we save cluster_name in /tmp/.env.config
-echo "cluster_name=${cluster_name}" > /tmp/.env.config
+echo "cluster_name=${cluster_name}" > /tmp/.env.config || echo "update_kubeconfig failed"
 
 
 # Processing
