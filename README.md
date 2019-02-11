@@ -276,7 +276,7 @@ exit 0
 And publish your function again
 
 ```
-$ make func-all
+$ make func-prep sam-package sam-deploy
 ```
 
 Invoke
@@ -314,7 +314,7 @@ exit 0
 Update the function
 
 ```
-$ make func-all
+$ make func-prep sam-package sam-deploy
 ```
 
 
@@ -356,7 +356,3 @@ I hope you find it useful and have fun with this project! Issues and PRs are ver
 # More Samples
 check [samples](./samples) directory
 
-
-# Todo
-
-- [x] provide more samples
