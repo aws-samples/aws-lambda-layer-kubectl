@@ -16,13 +16,14 @@
 You got the layer structure as below under `/opt` in lambda custom runtime:
 
 ```
+.
 ├── awscli
 │   ├── aws
 │   ├── awscli
-│   ├── awscli-1.16.85-py2.7.egg-info
+│   ├── awscli-1.16.101-py2.7.egg-info
 │   ├── bin
 │   ├── botocore
-│   ├── botocore-1.12.75-py2.7.egg-info
+│   ├── botocore-1.12.91-py2.7.egg-info
 │   ├── colorama
 │   ├── colorama-0.3.9-py2.7.egg-info
 │   ├── concurrent
@@ -35,16 +36,16 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── jmespath
 │   ├── jmespath-0.9.3-py2.7.egg-info
 │   ├── jq
+│   ├── make
 │   ├── pkg_resources
 │   ├── pyasn1
 │   ├── pyasn1-0.4.5-py2.7.egg-info
-│   ├── python_dateutil-2.7.5-py2.7.egg-info
+│   ├── python_dateutil-2.8.0-py2.7.egg-info
 │   ├── PyYAML-3.13-py2.7.egg-info
 │   ├── rsa
 │   ├── rsa-3.4.2-py2.7.egg-info
 │   ├── s3transfer
-│   ├── s3transfer-0.1.13-py2.7.egg-info
-│   ├── site-packages
+│   ├── s3transfer-0.2.0-py2.7.egg-info
 │   ├── six-1.12.0-py2.7.egg-info
 │   ├── six.py
 │   ├── six.pyc
@@ -56,6 +57,8 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 └── kubectl
     ├── aws-iam-authenticator
     └── kubectl
+
+31 directories, 9 files
 ```
 
 
