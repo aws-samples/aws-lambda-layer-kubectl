@@ -7,6 +7,7 @@ S3BUCKET ?= pahud-tmp-nrt
 LAMBDA_REGION ?= ap-northeast-1
 LAMBDA_FUNC_NAME ?= eks-kubectl
 LAMBDA_ROLE_ARN ?= arn:aws:iam::903779448426:role/EKSLambdaDrainer
+CLUSTER_NAME ?= default
 
 
 .PHONY: build 
@@ -68,7 +69,9 @@ sam-deploy:
 	-v $(HOME)/.aws:/home/samcli/.aws \
 	-w /home/samcli/workdir \
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	pahud/aws-sam-cli:latest sam deploy --template-file ./packaged.yaml --stack-name "$(LAMBDA_FUNC_NAME)-stack" --capabilities CAPABILITY_IAM
+	pahud/aws-sam-cli:latest sam deploy \
+	--parameter-overrides ClusterName=$(CLUSTER_NAME) FunctionName=$(LAMBDA_FUNC_NAME) \
+	--template-file ./packaged.yaml --stack-name "$(LAMBDA_FUNC_NAME)-stack" --capabilities CAPABILITY_IAM
 	# print the cloudformation stack outputs
 	aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAMBDA_FUNC_NAME)-stack" --query 'Stacks[0].Outputs'
 

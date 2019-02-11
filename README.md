@@ -172,52 +172,57 @@ Please copy the value of `OutputValue` above.
 
 5. create the lambda function
 
-Build the function zip bundle for the function
-
+prepare the function and populate into `./func.d`
 ```
-$ make func-zip
+$ make func-prep
+```
+you got the following files in `./func.d` directory
+```
+$ tree -L 2 ./func.d/
+./func.d/
+├── bootstrap
+├── libs.sh
+└── main.sh
+
+0 directories, 3 files
 ```
 
-Create the function with the layer ARN and default Amazon EKS cluster name(`cluster_name`) provided
-
+Let's deploy our lambda func with `SAM`. Let's say if our EKS cluster name is `eksnrt`, we'd deploy the function like this:
 ```
-$ LAMBDA_LAYERS=arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:25 CLUSTER_NAME=eksnrt make create-func
-```
+$ CLUSTER_NAME=eksnrt make sam-package sam-deploy
 
-response:
+Successfully packaged artifacts and wrote output template to file packaged.yaml.
+Execute the following command to deploy the packaged template
+aws cloudformation deploy --template-file /home/samcli/workdir/packaged.yaml --stack-name <YOUR STACK NAME>
 
-```
-{
-    "Layers": [
-        {
-            "CodeSize": 30058444, 
-            "Arn": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:layer:eks-kubectl-layer:25"
-        }
-    ], 
-    "FunctionName": "eks-kubectl", 
-    "LastModified": "2018-12-31T12:11:12.996+0000", 
-    "RevisionId": "7550c7bf-b6d4-45f8-a95a-3e8801c9a185", 
-    "MemorySize": 128, 
-    "Environment": {
-        "Variables": {
-            "cluster_name": "eksnrt"
-        }
+Waiting for changeset to be created..
+Waiting for stack create/update to complete
+Successfully created/updated stack - eks-kubectl-stack
+# print the cloudformation stack outputs
+aws --region ap-northeast-1 cloudformation describe-stacks --stack-name "eks-kubectl-stack" --query 'Stacks[0].Outputs'
+[
+    {
+        "Description": "Lambda Func Name", 
+        "ExportName": "LambdaFuncName-eks-kubectl-stack", 
+        "OutputKey": "LambdaFuncName", 
+        "OutputValue": "eks-kubectl"
     }, 
-    "Version": "$LATEST", 
-    "Role": "arn:aws:iam::xxxxxxxx:role/EKSLambdaRole", 
-    "Timeout": 30, 
-    "Runtime": "provided", 
-    "TracingConfig": {
-        "Mode": "PassThrough"
+    {
+        "Description": "Lambda Func ARN", 
+        "ExportName": "LambdaFuncArn-eks-kubectl-stack", 
+        "OutputKey": "LambdaFuncArn", 
+        "OutputValue": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:function:eks-kubectl"
     }, 
-    "CodeSha256": "hB9gOEy0U0kX9+hml0mpr4cT/nE8fXKSO3f2/RU0CCA=", 
-    "Description": "demo func for lambda-layer-kubectl", 
-    "CodeSize": 1802, 
-    "FunctionArn": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:function:eks-kubectl", 
-    "Handler": "main"
-}
+    {
+        "Description": "Lambda Role ARN", 
+        "ExportName": "LambdaRoleArn-eks-kubectl-stack", 
+        "OutputKey": "LambdaRoleArn", 
+        "OutputValue": "arn:aws:iam::xxxxxxxx:role/LambdaEKSAdminRole"
+    }
+]
 ```
 
+If you check the lambda function you'll see an environment variable `cluster_name=eksnrt` is assigned, which will be processed with `kubectl` in Lambda.
 
 
 6. Enable Lambda function to call Amazon EKS master API
