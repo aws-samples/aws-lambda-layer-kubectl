@@ -349,8 +349,21 @@ e.g.
 ![](images/04.png)
 
 
-
 I hope you find it useful and have fun with this project! Issues and PRs are very appreciated.
+
+
+# clean up
+
+clean up the function
+```
+$ make sam-destroy
+```
+clean up the layer
+```
+$ make sam-layer-destroy
+```
+
+You're done!
 
 
 # More Samples
