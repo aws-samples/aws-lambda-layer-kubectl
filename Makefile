@@ -6,6 +6,8 @@ LAYER_DESC ?= eks-kubectl-layer
 S3BUCKET ?= pahud-tmp-nrt
 LAMBDA_REGION ?= ap-northeast-1
 LAMBDA_FUNC_NAME ?= eks-kubectl
+LATEST_LAYER_ARN ?= $(shell aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAYER_NAME)-stack" --query 'Stacks[0].Outputs[0].OutputValue'  --output text)
+LATEST_LAYER_VER ?= $(shell echo $(LATEST_LAYER_ARN) | cut -d: -f8)
 LAMBDA_ROLE_ARN ?= arn:aws:iam::903779448426:role/EKSLambdaDrainer
 CLUSTER_NAME ?= default
 ifdef INPUT_YAML
@@ -39,7 +41,8 @@ sam-layer-deploy:
 	-v $(HOME)/.aws:/home/samcli/.aws \
 	-w /home/samcli/workdir \
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	pahud/aws-sam-cli:latest sam deploy --template-file ./sam-layer-packaged.yaml --stack-name "$(LAYER_NAME)-stack"
+	pahud/aws-sam-cli:latest sam deploy --template-file ./sam-layer-packaged.yaml --stack-name "$(LAYER_NAME)-stack" \
+	--parameter-overrides LayerName=$(LAYER_NAME) \
 	# print the cloudformation stack outputs
 	aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAYER_NAME)-stack" --query 'Stacks[0].Outputs'
 	@echo "[OK] Layer version deployed."
@@ -47,6 +50,25 @@ sam-layer-deploy:
 .PHONY: sam-layer-info
 sam-layer-info:
 	@aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAYER_NAME)-stack" --query 'Stacks[0].Outputs'
+	
+
+.PHONY: sam-layer-add-version-permission
+sam-layer-add-version-permission:
+	@aws --region $(LAMBDA_REGION) lambda add-layer-version-permission \
+	--layer-name $(LAYER_NAME) \
+	--version-number $(LAYER_VER) \
+	--statement-id public-all \
+	--action lambda:GetLayerVersion \
+	--principal '*'
+	
+.PHONY: sam-layer-add-version-permission-latest
+sam-layer-add-version-permission-latest:
+	@aws --region $(LAMBDA_REGION) lambda add-layer-version-permission \
+	--layer-name $(LAYER_NAME) \
+	--version-number $(LATEST_LAYER_VER) \
+	--statement-id public-all \
+	--action lambda:GetLayerVersion \
+	--principal '*'
 	
 
 .PHONY: sam-layer-destroy
