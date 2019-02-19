@@ -1,4 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  LayerName:
+    Type: String
+    
+
 Transform: AWS::Serverless-2016-10-31
 Description: Create a Layer
 
@@ -6,7 +12,7 @@ Resources:
   LambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: !Sub "layer-${AWS::StackName}"
+      LayerName: !Ref LayerName
       ContentUri: ./layer.zip
       CompatibleRuntimes: 
         - provided
