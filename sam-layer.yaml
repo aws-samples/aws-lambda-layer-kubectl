@@ -4,6 +4,19 @@ Parameters:
   LayerName:
     Type: String
     
+    
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: lambda-layer-kubectl
+    Description: "Lambda Layer for kubectl for Amazon EKS"
+    Author: Pahud Hsieh
+    SpdxLicenseId: Apache-2.0
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels: ['layer','lambda','kubectl','eks', 'aws', 'kubernetes', 'k8s']
+    HomePageUrl: https://github.com/pahud/lambda-layer-kubectl
+    SemanticVersion: 1.0.0
+    SourceCodeUrl: https://github.com/pahud/lambda-layer-kubectl 
 
 Transform: AWS::Serverless-2016-10-31
 Description: Create a Layer

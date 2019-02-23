@@ -67,11 +67,59 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 
 # HOWTO
 
-You can just include the provided Lambda Layer from my account or built your own from scratch.
+You may install the Layer from `SAR` or just build it from scratch.
+
+
+## OPTION #1 - Install from SAR(Serverless App Repository)
+
+This is the recommended approach. We deploy the kubectl lambda layer straight from `SAR(Serverless App Repository)`
+
+
+```
+$ aws --region REGION_CODE_TO_DEPLOY serverlessrepo create-cloud-formation-template --application-id arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl
+
+{
+    "Status": "PREPARING", 
+    "TemplateId": "89be5908-520b-4911-bde7-71bf73040e47", 
+    "CreationTime": "2019-02-20T14:51:56.826Z", 
+    "SemanticVersion": "1.0.0", 
+    "ExpirationTime": "2019-02-20T20:51:56.826Z", 
+    "ApplicationId": "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl", 
+    "TemplateUrl": "..."
+}
+```
+(change `REGION_CODE_TO_DEPLOY` to the region code to deploy this layer(e.g. `ap-northeast-1` or `us-west-2`. It doesn't have to be `us-east-1`).
+
+
+Copy the `TemplateUrl` value and deploy with `cloudformation create-stack`
+
+
+```
+aws --region REGION_CODE_TO_DEPLOY cloudformation create-stack --template-url {TemplateUrl} --stack-name {StackName} --capabilities CAPABILITY_AUTO_EXPAND \
+--parameter ParameterKey=LayerName,ParameterValue=lambda-layer-kubectl
+```
+
+On stack create complete, get the stack outputs as below
+
+```
+$ aws --region REGION_CODE_TO_DEPLOY cloudformation describe-stacks --stack-name {StackName} --query 'Stacks[0].Outputs'
+[
+    {
+        "Description": "ARN for the published Layer version", 
+        "ExportName": "LayerVersionArn-{StackName}", 
+        "OutputKey": "LayerVersionArn", 
+        "OutputValue": "arn:aws:lambda:ap-northeast-1:123456789012:layer:lambda-layer-kubectl:1"
+    }
+]
+```
+
+
+Now you got your own private Lambda Layer Arn for `lambda-layer-kubectl`.
 
 
 
-## Build from scratch
+
+## OPTION #2 - Build from scratch
 
 1. check out this repository 
 
