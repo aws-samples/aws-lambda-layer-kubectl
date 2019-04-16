@@ -387,8 +387,6 @@ To specify different `cluster_name` with the default one in environment variable
 ```
 $ CLUSTER_NAME="another_cluster_name" INPUT_YAML=nginx.yaml make invoke
 ```
-(see [#1](https://github.com/pahud/lambda-layer-kubectl/issues/1) for implementation details)
-
 
 
 kubectl apply -f `REMOTE_URL` like this
