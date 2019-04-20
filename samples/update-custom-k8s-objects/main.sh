@@ -59,30 +59,6 @@ kubectl_delete(){
   done
 }
 
-
-# update_aws_auth_cm(){
-#   echo "=> trying to apply the yaml..."
-#   cat << EOF | kubectl apply -f -
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: aws-auth
-#   namespace: kube-system
-# data:
-#   mapRoles: |
-#     - rolearn: ${iam_role_arn}
-#       username: system:node:{{EC2PrivateDNSName}}
-#       groups:
-#         - system:bootstrappers
-#         - system:nodes
-#     - rolearn: ${lambda_role_arn}
-#       username: LambdaEKSAdmin
-#       groups:
-#         - system:masters
-# EOF
-# }
-
-
 sendResponseSuccess(){
   cat << EOF > /tmp/sendResponse.body.json
 {
