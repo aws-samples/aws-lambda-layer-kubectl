@@ -1,8 +1,8 @@
-# update-custom-k8s-objects
+# create-k8s-objects
 
-This sample helps you create kubernetes object resources in cloudformation.
+This sample helps you create kubernetes object resources in cloudformation or SAM templates.
 
-Read the content of `sam-sar.yaml` for details.
+Read the content of [sar-sam.yaml](./sar-sam.yaml) for details.
 
 
 # Sample custom resource
@@ -24,7 +24,10 @@ This custom resource will generate `nginx` and `caddy` services from the given U
 # Demo
 
 ```
-$ LambdaLayerKubectlArn=arn:aws:lambda:us-west-2:903779448426:layer:eks-kubectl-layer:1 NodeInstanceRoleArn=arn:aws:iam::903779448426:role/eksdemo-NG-17Z98DEIJVUTB-NodeInstanceRole-2MVHHIC3RIZB LambdaRoleArn=arn:aws:iam::903779448426:role/AmazonEKSAdminRole make func-prep sam-package sam-deploy-tes
+$ LambdaLayerKubectlArn=arn:aws:lambda:us-west-2:903779448426:layer:eks-kubectl-layer:1 \
+NodeInstanceRoleArn=arn:aws:iam::903779448426:role/eksdemo-NG-17Z98DEIJVUTB-NodeInstanceRole-2MVHHIC3RIZB \
+LambdaRoleArn=arn:aws:iam::903779448426:role/AmazonEKSAdminRole \
+make func-prep sam-package sam-deploy-test
 ```
 
 Cloudwatch Logs
