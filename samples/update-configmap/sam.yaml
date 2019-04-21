@@ -9,9 +9,9 @@ Metadata:
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
     Labels: ['eks','aws-auth','ConfigMap','hook']
-    HomePageUrl: https://github.com/pahud/lambda-layer-kubectl/tree/master/samples/update-configmap
+    HomePageUrl: https://github.com/aws-samples/aws-lambda-layer-kubectl/tree/master/samples/update-configmap
     SemanticVersion: 1.0.0
-    SourceCodeUrl: https://github.com/pahud/lambda-layer-kubectl/tree/master/samples/update-configmap
+    SourceCodeUrl: https://github.com/aws-samples/aws-lambda-layer-kubectl/tree/master/samples/update-configmap
     
 Parameters:
   ClusterName:
