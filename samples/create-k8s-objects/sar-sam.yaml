@@ -26,21 +26,14 @@ Parameters:
     Type: String
   LambdaLayerKubectlArn:
     Type: String
-    # Default: arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:layer:layer-eks-kubectl-layer-stack:2
-  # K8sResourceUrls:
-  #   Type: String
-  #   Default: https://raw.githubusercontent.com/pahud/amazon-eks-workshop/master/03-creating-services/01-nginx-svc-clusterip.yaml
-    
-    
 
 Transform: AWS::Serverless-2016-10-31
-Description: Amazon EKS ConfigMap update handler
+Description: kubernetes resource object handler
 Resources:
   Func:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Ref FunctionName
-      # FunctionName: !Sub "${FunctionName}-${AWS::StackName}"
       Handler: main
       CodeUri: ./func.d
       Runtime: provided
@@ -53,10 +46,6 @@ Resources:
           iam_role_arn: !Ref NodeInstanceRoleArn
           aws_account_id: !Sub "${AWS::AccountId}"
           lambda_role_arn: !Ref LambdaRoleArn
-          # k8s_resouce_urls: !Ref K8sResourceUrls
-      # Policies: 
-      #   - AWSLambdaBasicExecutionRole
-      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
       Role: !Ref LambdaRoleArn
       Timeout: 10
 
@@ -80,9 +69,5 @@ Outputs:
   LambdaRoleArn:
     Description: Lambda Role ARN
     Value: !Ref LambdaRoleArn
-    # Value: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
-  # ResultData:
-  #   Description: response of the custom resource
-  #   Value: !GetAtt UpdateCM.Result
       
       
