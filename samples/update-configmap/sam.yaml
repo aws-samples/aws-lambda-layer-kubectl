@@ -1,5 +1,18 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: eks-auth-update-hook
+    Description: "This Lambda function update the Amazon EKS aws-auth ConfigMap for you."
+    Author: Pahud Hsieh
+    SpdxLicenseId: Apache-2.0
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels: ['eks','aws-auth','ConfigMap','hook']
+    HomePageUrl: https://github.com/pahud/lambda-layer-kubectl/tree/master/samples/update-configmap
+    SemanticVersion: 1.0.0
+    SourceCodeUrl: https://github.com/pahud/lambda-layer-kubectl/tree/master/samples/update-configmap
+    
 Parameters:
   ClusterName:
     Type: String
@@ -7,9 +20,17 @@ Parameters:
   FunctionName:
     Type: String
     Default: defaultFunc
+  NodeInstanceRoleArn:
+    Type: String
+  LambdaRoleArn:
+    Type: String
+  LambdaLayerKubectlArn:
+    Type: String
+    # Default: arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:layer:layer-eks-kubectl-layer-stack:2
+    
 
 Transform: AWS::Serverless-2016-10-31
-Description: Example
+Description: Amazon EKS ConfigMap update handler
 Resources:
   Func:
     Type: AWS::Serverless::Function
@@ -19,42 +40,38 @@ Resources:
       CodeUri: ./func.d
       Runtime: provided
       Layers:
-        - !Sub "arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:layer:layer-eks-kubectl-layer-stack:2"
+        - !Ref LambdaLayerKubectlArn
+        # - !Sub "arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:layer:layer-eks-kubectl-layer-stack:2"
       MemorySize: 512
       Environment:
         Variables:
           cluster_name: !Ref ClusterName
-          iam_role_arn: arn:aws:iam::903779448426:role/eksdemo-NG-1RPL723W45VT5-NodeInstanceRole-1D4S7IF32IDU1
+          iam_role_arn: !Ref NodeInstanceRoleArn
           aws_account_id: !Sub "${AWS::AccountId}"
-          lambda_role_arn: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
+          lambda_role_arn: !Ref LambdaRoleArn
       # Policies: 
       #   - AWSLambdaBasicExecutionRole
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
+      # Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
+      Role: !Ref LambdaRoleArn
       Timeout: 10
 
-  UpdateCM:
-    Type: Custom::UpdateConfigMap
-    Properties:
-      ServiceToken: !GetAtt Func.Arn
-      NodeInstanceRole: xxxxxxxxxxxxxxx
+  # UpdateCM:
+  #   Type: Custom::UpdateConfigMap
+  #   Properties:
+  #     ServiceToken: !GetAtt Func.Arn
 
 
 Outputs:
   LambdaFuncArn:
     Description: Lambda Func ARN
     Value: !GetAtt Func.Arn
-    Export:
-      Name: !Sub 'LambdaFuncArn-${AWS::StackName}'
   LambdaFuncName:
     Description: Lambda Func Name
     Value: !Ref Func
-    Export:
-      Name: !Sub 'LambdaFuncName-${AWS::StackName}'
   LambdaRoleArn:
     Description: Lambda Role ARN
-    Value: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
-    Export:
-      Name: !Sub 'LambdaRoleArn-${AWS::StackName}'
+    Value: !Ref LambdaRoleArn
+    # Value: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
   # ResultData:
   #   Description: response of the custom resource
   #   Value: !GetAtt UpdateCM.Result

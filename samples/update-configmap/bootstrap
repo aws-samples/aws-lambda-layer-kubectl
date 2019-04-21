@@ -1,0 +1,47 @@
+#!/bin/sh
+
+set -euo pipefail
+
+# Initialization - load function handler
+#source $LAMBDA_TASK_ROOT/"$(echo $_HANDLER | cut -d. -f1).sh"
+
+export PATH=$PATH:/opt/awscli:/opt/kubectl
+
+if [ -z ${cluster_name:-} ]; then
+    echo "missing cluster_name in lambda environment variables - using 'default' as the cluster_name"
+fi
+
+cluster_name=${cluster_name-default}
+iam_role_arn=${iam_role_arn-default}
+aws_account_id=${aws_account_id-default}
+lambda_role_arn=${lambda_role_arn-default}
+
+
+update_kubeconfig(){
+    aws eks update-kubeconfig --name "$1"  --kubeconfig /tmp/kubeconfig
+}
+
+update_kubeconfig "$cluster_name" && \
+# for container-reuse we save cluster_name in /tmp/.env.config
+echo "cluster_name=${cluster_name}" > /tmp/.env.config || echo "update_kubeconfig failed"
+
+
+# Processing
+while true
+do
+  HEADERS="$(mktemp)"
+  # Get an event
+  EVENT_DATA=$(curl -sS -LD "$HEADERS" -X GET "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next")
+  REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
+
+  # Execute the handler function from the script
+  RESPONSE=$(./$(echo "$_HANDLER" | cut -d. -f2).sh "$EVENT_DATA")
+
+
+  echo "=========[RESPONSE]======="
+  echo "$RESPONSE"
+  echo "=========[/RESPONSE]======="
+
+  # Send the response
+  curl -s -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response"  -d "$RESPONSE"
+done
