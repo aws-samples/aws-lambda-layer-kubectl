@@ -11,7 +11,7 @@
 
 # Features
 
-- [x] Ships all the required assests including `kubectl`, `aws-iam-authenticator`, `aws` CLI and `jq`. Just include the layer and you get everything required.
+- [x] Ships all the required assests including `kubectl`, `aws` CLI and `jq`. Just include the layer and you get everything required.
 - [x] It takes care of the Amazon EKS authentication behind the scene.
 - [x] Straight `kubectl` against Amazon EKS without `client-go` or python client SDK for K8s. Zero code experience required. Just shell script.
 - [x] Invoke your Lambda function with any `yaml` file from local and it can `kubectl apply -f` for you to apply it on Amazon EKS.
@@ -60,7 +60,6 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── wheel-0.29.0.dist-info
 │   └── yaml
 └── kubectl
-    ├── aws-iam-authenticator
     └── kubectl
 
 31 directories, 9 files
