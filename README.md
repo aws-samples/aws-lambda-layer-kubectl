@@ -5,13 +5,13 @@
 
 # lambda-layer-kubectl
 
-**lambda-layer-kubectl** is an [AWS Lambda Layer](https://docs.aws.amazon.com/en_us/lambda/latest/dg/configuration-layers.html) that encapsulates all the required assets to interact with **Amazon EKS** control plane and help you directly **`kubectl`** against Amazon EKS in AWS Lambda. You could just write 2~5 lines of shell script and it takes all the rest for you while your code size could minimize down to [1.5KB only](https://twitter.com/pahudnet/status/1078563515898707968).
+**aws-lambda-layer-kubectl** is an [AWS Lambda Layer](https://docs.aws.amazon.com/en_us/lambda/latest/dg/configuration-layers.html) that encapsulates all the required assets to interact with **Amazon EKS** control plane and help you directly **`kubectl`** against Amazon EKS in AWS Lambda. You could just write 2~5 lines of shell script and it takes all the rest for you while your code size could minimize down to [1.5KB only](https://twitter.com/pahudnet/status/1078563515898707968).
 
 
 
 # Features
 
-- [x] Ships all the required assests including `kubectl`, `aws-iam-authenticator`, `aws` CLI and `jq`. Just include the layer and you get everything required.
+- [x] Ships all the required assests including `kubectl`, `aws` CLI and `jq`. Just include the layer and you get everything required.
 - [x] It takes care of the Amazon EKS authentication behind the scene.
 - [x] Straight `kubectl` against Amazon EKS without `client-go` or python client SDK for K8s. Zero code experience required. Just shell script.
 - [x] Invoke your Lambda function with any `yaml` file from local and it can `kubectl apply -f` for you to apply it on Amazon EKS.
@@ -25,10 +25,10 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 ├── awscli
 │   ├── aws
 │   ├── awscli
-│   ├── awscli-1.16.101-py2.7.egg-info
+│   ├── awscli-1.16.161-py2.7.egg-info
 │   ├── bin
 │   ├── botocore
-│   ├── botocore-1.12.91-py2.7.egg-info
+│   ├── botocore-1.12.151-py2.7.egg-info
 │   ├── colorama
 │   ├── colorama-0.3.9-py2.7.egg-info
 │   ├── concurrent
@@ -39,7 +39,7 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── easy_install.pyc
 │   ├── futures-3.2.0-py2.7.egg-info
 │   ├── jmespath
-│   ├── jmespath-0.9.3-py2.7.egg-info
+│   ├── jmespath-0.9.4-py2.7.egg-info
 │   ├── jq
 │   ├── make
 │   ├── pkg_resources
@@ -55,15 +55,14 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── six.py
 │   ├── six.pyc
 │   ├── urllib3
-│   ├── urllib3-1.24.1-py2.7.egg-info
+│   ├── urllib3-1.24.3-py2.7.egg-info
 │   ├── wheel
 │   ├── wheel-0.29.0.dist-info
 │   └── yaml
 └── kubectl
-    ├── aws-iam-authenticator
     └── kubectl
 
-31 directories, 9 files
+31 directories, 8 files
 ```
 
 
@@ -78,7 +77,7 @@ This is the recommended approach. We deploy the kubectl lambda layer straight fr
 
 
 ```
-$ aws --region REGION_CODE_TO_DEPLOY serverlessrepo create-cloud-formation-template --application-id arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl
+$ aws --region REGION_CODE_TO_DEPLOY serverlessrepo create-cloud-formation-template --application-id arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl --semantic-version 1.0.1
 
 {
     "Status": "PREPARING", 

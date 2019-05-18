@@ -6,7 +6,6 @@ RUN yum update -y && yum install -y unzip make wget
 
 ADD https://s3.amazonaws.com/aws-cli/awscli-bundle.zip /root
 
-    
 RUN unzip awscli-bundle.zip && \
     cd awscli-bundle;
     
@@ -19,11 +18,9 @@ RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
 && chmod +x /opt/awscli/jq
 
 
-
-# download kubectl and aws-iam-authenticator
-ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl /opt/kubectl/
-ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/aws-iam-authenticator  /opt/kubectl/
-RUN chmod +x /opt/kubectl/kubectl /opt/kubectl/aws-iam-authenticator
+# download kubectl
+ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/kubectl /opt/kubectl/
+RUN chmod +x /opt/kubectl/kubectl
   
 #
 # prepare the runtime at /opt/kubectl
@@ -46,10 +43,9 @@ COPY --from=builder /opt/awscli/jq /opt/awscli/jq;
 COPY --from=builder /usr/bin/make /opt/awscli/make; 
 
 #
-# kubectl and aws-iam-authenticator
+# kubectl
 #
 COPY --from=builder /opt/kubectl/kubectl /opt/kubectl/kubectl
-COPY --from=builder /opt/kubectl/aws-iam-authenticator /opt/kubectl/aws-iam-authenticator
 
 # remove unnecessary files to reduce the size
 RUN rm -rf /opt/awscli/pip* /opt/awscli/setuptools* /opt/awscli/awscli/examples
