@@ -420,6 +420,18 @@ You're done!
 check [samples](./samples) directory
 
 
+
+## Cross-Accounts Access
+
+In some cases, you may need cross-account access to different Amazon EKS clusters. The idea is to generate different kubeconfig files and feed the lambda function via environment variables. Check [this sample](https://github.com/aws-samples/aws-lambda-layer-kubectl/issues/3) for more details.
+
+![](images/cross-accounts-01.png)
+
+
+
+
+
+
 ## License Summary
 
 This sample code is made available under the MIT-0 license. See the LICENSE file.
