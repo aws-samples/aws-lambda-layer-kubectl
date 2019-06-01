@@ -73,6 +73,12 @@ sam-layer-add-version-permission:
 	--action lambda:GetLayerVersion \
 	--principal '*'
 	
+.PHONY: sam-get-layer-version-policy
+sam-get-layer-version-policy:
+	@aws --profile=$(AWS_PROFILE) --region $(LAMBDA_REGION) lambda get-layer-version-policy \
+	--layer-name $(LAYER_NAME) \
+	--version-number $(LATEST_LAYER_VER) 
+	
 .PHONY: sam-layer-add-version-permission-latest
 sam-layer-add-version-permission-latest:
 	@aws --profile=$(AWS_PROFILE) --region $(LAMBDA_REGION) lambda add-layer-version-permission \
