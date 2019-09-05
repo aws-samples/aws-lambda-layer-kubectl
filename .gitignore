@@ -1,4 +1,5 @@
 *.zip
+.DS_Store
 event.json
 kubectl
 aws-iam-authenticator

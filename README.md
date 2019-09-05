@@ -16,6 +16,17 @@
 - [x] Straight `kubectl` against Amazon EKS without `client-go` or python client SDK for K8s. Zero code experience required. Just shell script.
 - [x] Invoke your Lambda function with any `yaml` file from local and it can `kubectl apply -f` for you to apply it on Amazon EKS.
 
+
+
+# Current Version
+
+| kubectl    | 1.14.16      |
+| ---------- | ------------ |
+| **awscli** | **1.16.232** |
+| **jq**     | **1.6**      |
+
+
+
 # Layer structure
 
 You got the layer structure as below under `/opt` in lambda custom runtime:
@@ -23,42 +34,42 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 ```
 .
 ├── awscli
-│   ├── aws
-│   ├── awscli
-│   ├── awscli-1.16.161-py2.7.egg-info
-│   ├── bin
-│   ├── botocore
-│   ├── botocore-1.12.151-py2.7.egg-info
-│   ├── colorama
-│   ├── colorama-0.3.9-py2.7.egg-info
-│   ├── concurrent
-│   ├── dateutil
-│   ├── docutils
-│   ├── docutils-0.14-py2.7.egg-info
-│   ├── easy_install.py
-│   ├── easy_install.pyc
-│   ├── futures-3.2.0-py2.7.egg-info
-│   ├── jmespath
-│   ├── jmespath-0.9.4-py2.7.egg-info
-│   ├── jq
-│   ├── make
-│   ├── pkg_resources
-│   ├── pyasn1
-│   ├── pyasn1-0.4.5-py2.7.egg-info
-│   ├── python_dateutil-2.8.0-py2.7.egg-info
-│   ├── PyYAML-3.13-py2.7.egg-info
-│   ├── rsa
-│   ├── rsa-3.4.2-py2.7.egg-info
-│   ├── s3transfer
-│   ├── s3transfer-0.2.0-py2.7.egg-info
-│   ├── six-1.12.0-py2.7.egg-info
-│   ├── six.py
-│   ├── six.pyc
-│   ├── urllib3
-│   ├── urllib3-1.24.3-py2.7.egg-info
-│   ├── wheel
-│   ├── wheel-0.29.0.dist-info
-│   └── yaml
+│   ├── PyYAML-5.1.2-py2.7.egg-info
+│   ├── aws
+│   ├── awscli
+│   ├── awscli-1.16.232-py2.7.egg-info
+│   ├── bin
+│   ├── botocore
+│   ├── botocore-1.12.222-py2.7.egg-info
+│   ├── colorama
+│   ├── colorama-0.3.9-py2.7.egg-info
+│   ├── concurrent
+│   ├── dateutil
+│   ├── docutils
+│   ├── docutils-0.15.2-py2.7.egg-info
+│   ├── easy_install.py
+│   ├── easy_install.pyc
+│   ├── futures-3.3.0-py2.7.egg-info
+│   ├── jmespath
+│   ├── jmespath-0.9.4-py2.7.egg-info
+│   ├── jq
+│   ├── make
+│   ├── pkg_resources
+│   ├── pyasn1
+│   ├── pyasn1-0.4.7-py2.7.egg-info
+│   ├── python_dateutil-2.8.0-py2.7.egg-info
+│   ├── rsa
+│   ├── rsa-3.4.2-py2.7.egg-info
+│   ├── s3transfer
+│   ├── s3transfer-0.2.1-py2.7.egg-info
+│   ├── six-1.12.0-py2.7.egg-info
+│   ├── six.py
+│   ├── six.pyc
+│   ├── urllib3
+│   ├── urllib3-1.25.3-py2.7.egg-info
+│   ├── wheel
+│   ├── wheel-0.29.0.dist-info
+│   └── yaml
 └── kubectl
     └── kubectl
 
@@ -79,8 +90,8 @@ You may deploy from the console or from the command line.
 
 ### Deploy from SAR console
 
-|        Region        |                    Click and Deploy                     | 
-| :----------------: | :----------------------------------------------------------: | 
+|        Region        |                    Click and Deploy                     |
+| :----------------: | :----------------------------------------------------------: |
 |  **ap-northeast-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-northeast-1/?app=arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl)|
 |  **ap-northeast-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-northeast-2/?app=arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl)|
 |  **ap-northeast-3**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-northeast-3/?app=arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl)|
@@ -103,13 +114,13 @@ You may deploy from the console or from the command line.
 
 
 ```
-$ aws --region REGION_CODE_TO_DEPLOY serverlessrepo create-cloud-formation-template --application-id arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl --semantic-version 1.0.1
+$ aws --region REGION_CODE_TO_DEPLOY serverlessrepo create-cloud-formation-template --application-id arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl --semantic-version 1.14.6
 
 {
     "Status": "PREPARING", 
     "TemplateId": "89be5908-520b-4911-bde7-71bf73040e47", 
     "CreationTime": "2019-02-20T14:51:56.826Z", 
-    "SemanticVersion": "1.0.0", 
+    "SemanticVersion": "1.14.6", 
     "ExpirationTime": "2019-02-20T20:51:56.826Z", 
     "ApplicationId": "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl", 
     "TemplateUrl": "..."

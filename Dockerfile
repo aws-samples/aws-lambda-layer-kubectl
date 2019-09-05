@@ -19,7 +19,7 @@ RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
 
 
 # download kubectl
-ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/kubectl /opt/kubectl/
+ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl /opt/kubectl/
 RUN chmod +x /opt/kubectl/kubectl
   
 #

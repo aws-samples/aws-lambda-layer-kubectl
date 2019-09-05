@@ -15,7 +15,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['layer','lambda','kubectl','eks', 'aws', 'kubernetes', 'k8s']
     HomePageUrl: https://github.com/aws-samples/aws-lambda-layer-kubectl
-    SemanticVersion: 1.13.7
+    SemanticVersion: 1.14.6
     SourceCodeUrl: https://github.com/aws-samples/aws-lambda-layer-kubectl
 
 Transform: AWS::Serverless-2016-10-31
