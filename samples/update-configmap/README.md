@@ -3,7 +3,7 @@
 #  eks-auth-update-hook
 
 This sample creates an AWS Serverless Application from SAR(Serverless App Repository) 
-and behaves as a cloufromation custom resource to help [aws-samples/amazon-eks-refarch-cloudformation](https://github.com/aws-samples/amazon-eks-refarch-cloudformation) project 
+and behaves as a cloudformation custom resource to help [aws-samples/amazon-eks-refarch-cloudformation](https://github.com/aws-samples/amazon-eks-refarch-cloudformation) project 
 create a complete Amazon EKS cluster and update the `aws-auth` configmap in a automated flow.
 
 
