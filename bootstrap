@@ -5,7 +5,7 @@ set -euo pipefail
 # Initialization - load function handler
 #source $LAMBDA_TASK_ROOT/"$(echo $_HANDLER | cut -d. -f1).sh"
 
-export PATH=$PATH:/opt/awscli:/opt/kubectl
+export PATH=$PATH:/opt/awscli:/opt/kubectl:/opt/helm
 
 if [ -z ${cluster_name:-} ]; then
     echo "missing cluster_name in lambda environment variables - using 'default' as the cluster_name"
