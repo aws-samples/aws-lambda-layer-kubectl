@@ -13,7 +13,7 @@ Metadata:
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
-    Labels: ['layer','lambda','kubectl','eks', 'aws', 'kubernetes', 'k8s']
+    Labels: ['layer','lambda','kubectl','eks', 'aws', 'kubernetes', 'k8s', 'helm']
     HomePageUrl: https://github.com/aws-samples/aws-lambda-layer-kubectl
     SemanticVersion: 1.14.6
     SourceCodeUrl: https://github.com/aws-samples/aws-lambda-layer-kubectl

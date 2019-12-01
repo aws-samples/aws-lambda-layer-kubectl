@@ -5,29 +5,30 @@
 
 # lambda-layer-kubectl
 
-**aws-lambda-layer-kubectl** is an [AWS Lambda Layer](https://docs.aws.amazon.com/en_us/lambda/latest/dg/configuration-layers.html) that encapsulates all the required assets to interact with **Amazon EKS** control plane and help you directly **`kubectl`** against Amazon EKS in AWS Lambda. You could just write 2~5 lines of shell script and it takes all the rest for you while your code size could minimize down to [1.5KB only](https://twitter.com/pahudnet/status/1078563515898707968).
+**aws-lambda-layer-kubectl** is an [AWS Lambda Layer](https://docs.aws.amazon.com/en_us/lambda/latest/dg/configuration-layers.html) that encapsulates all the required assets to interact with **Amazon EKS** control plane and help you directly **`kubectl`** against Amazon EKS in AWS Lambda.
 
 
 
-# Features
+## Features
 
-- [x] Ships all the required assests including `kubectl`, `aws` CLI and `jq`. Just include the layer and you get everything required.
-- [x] It takes care of the Amazon EKS authentication behind the scene.
-- [x] Straight `kubectl` against Amazon EKS without `client-go` or python client SDK for K8s. Zero code experience required. Just shell script.
-- [x] Invoke your Lambda function with any `yaml` file from local and it can `kubectl apply -f` for you to apply it on Amazon EKS.
-
-
-
-# Current Version
-
-| kubectl    | 1.14.16      |
-| ---------- | ------------ |
-| **awscli** | **1.16.232** |
-| **jq**     | **1.6**      |
+- [x] Ships all the required assests including **kubectl**, **aws-cli**, **make** and **jq** Just include the layer and you get everything required.
+- [x] **Helm 3** included.
+- [x] Amazon EKS authentication under the hood on bootstrap.
 
 
 
-# Layer structure
+## Current Version
+
+| kubectl      | 1.14.16      |
+| :----------- | :----------- |
+| **awscli**   | **1.16.292** |
+| **helm**     | **3.0.0**    |
+| **jq**       | **1.6**      |
+| **GNU Make** | **3.82**     |
+
+
+
+## Layer structure
 
 You got the layer structure as below under `/opt` in lambda custom runtime:
 
@@ -37,12 +38,12 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── PyYAML-5.1.2-py2.7.egg-info
 │   ├── aws
 │   ├── awscli
-│   ├── awscli-1.16.232-py2.7.egg-info
+│   ├── awscli-1.16.292-py2.7.egg-info
 │   ├── bin
 │   ├── botocore
-│   ├── botocore-1.12.222-py2.7.egg-info
+│   ├── botocore-1.13.28-py2.7.egg-info
 │   ├── colorama
-│   ├── colorama-0.3.9-py2.7.egg-info
+│   ├── colorama-0.4.1-py2.7.egg-info
 │   ├── concurrent
 │   ├── dateutil
 │   ├── docutils
@@ -56,25 +57,36 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── make
 │   ├── pkg_resources
 │   ├── pyasn1
-│   ├── pyasn1-0.4.7-py2.7.egg-info
+│   ├── pyasn1-0.4.8-py2.7.egg-info
 │   ├── python_dateutil-2.8.0-py2.7.egg-info
 │   ├── rsa
 │   ├── rsa-3.4.2-py2.7.egg-info
 │   ├── s3transfer
 │   ├── s3transfer-0.2.1-py2.7.egg-info
-│   ├── six-1.12.0-py2.7.egg-info
+│   ├── six-1.13.0-py2.7.egg-info
 │   ├── six.py
 │   ├── six.pyc
 │   ├── urllib3
-│   ├── urllib3-1.25.3-py2.7.egg-info
+│   ├── urllib3-1.25.7-py2.7.egg-info
 │   ├── wheel
 │   ├── wheel-0.29.0.dist-info
 │   └── yaml
+├── helm
+│   └── helm
 └── kubectl
     └── kubectl
 
-31 directories, 8 files
+32 directories, 9 files
 ```
+
+
+
+## Supported Lambda Runtime
+
+| lambda runtime | runtime attribute name in CFN/SAM | Remarks                                                      |
+| -------------- | --------------------------------- | ------------------------------------------------------------ |
+| Custom Runtime | provided                          | you need bundle the bootstrap in your lambda function bundle([example](https://github.com/aws-samples/aws-lambda-layer-kubectl/blob/master/samples/create-k8s-objects/bootstrap)) |
+
 
 
 # HOWTO
@@ -86,7 +98,7 @@ You may install the Layer from `SAR` or just build it from scratch.
 
 This is the recommended approach. We deploy the kubectl lambda layer straight from `SAR(Serverless App Repository)`
 
-You may deploy from the console or from the command line.
+You may deploy it from the console, AWS CDK or CLI.
 
 ### Deploy from SAR console
 
@@ -112,37 +124,80 @@ You may deploy from the console or from the command line.
 |  **us-west-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/us-west-1/?app=arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl)|
 |  **us-west-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/us-west-2/?app=arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl)|
 
-### Deploy from CLI
+
+
+### Deploy with AWS CDK
+
+```js
+import cdk = require('@aws-cdk/core');
+import sam = require('@aws-cdk/aws-sam');
+import lambda = require('@aws-cdk/aws-lambda');
+
+// Keep the class name stable please
+export class AppStack extends cdk.Stack {
+    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
+    
+        const samApp = new sam.CfnApplication(this, 'SamLayer', {
+          location: {
+            applicationId: 'arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl',
+            semanticVersion: '2.0.0-beta1'
+          },
+          parameters: {
+            LayerName: `${this.stackName}-kubectl-layer`
+          }
+        })
+
+      const layerVersionArn = samApp.getAtt('Outputs.LayerVersionArn').toString();
+      new cdk.CfnOutput(this, 'LayerVerionArn', { value: layerVersionArn })
+
+    }
+}
+```
+
+or play with it at https://play-with-cdk.com?s=99acb08caf74fc982ebfa931da476888
+
+
+
+### Deploy with AWS CLI
+
+Alternatively, you may deploy it with AWS CLI.
 
 
 ```
-$ aws --region REGION_CODE_TO_DEPLOY serverlessrepo create-cloud-formation-template --application-id arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl --semantic-version 1.14.6
+$ APP_ID='arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl'
+
+$ LATEST_VERSION=$(aws serverlessrepo get-application --application-id ${APP_ID} --query 'Version.SemanticVersion' --output text)
+
+$ aws --region ${REGION_CODE_TO_DEPLOY} serverlessrepo create-cloud-formation-template \
+--application-id  ${APP_ID} \
+--semantic-version ${LATEST_VERSION}
 
 {
     "Status": "PREPARING", 
     "TemplateId": "89be5908-520b-4911-bde7-71bf73040e47", 
     "CreationTime": "2019-02-20T14:51:56.826Z", 
-    "SemanticVersion": "1.14.6", 
+    "SemanticVersion": "...", 
     "ExpirationTime": "2019-02-20T20:51:56.826Z", 
     "ApplicationId": "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl", 
     "TemplateUrl": "..."
 }
 ```
-(change `REGION_CODE_TO_DEPLOY` to the region code to deploy this layer(e.g. `ap-northeast-1` or `us-west-2`. It doesn't have to be `us-east-1`).
+(change `REGION_CODE_TO_DEPLOY` to the region code to deploy this layer(e.g. `ap-northeast-1` or `us-west-2`)
 
 
 Copy the `TemplateUrl` value and deploy with `cloudformation create-stack`
 
 
 ```
-aws --region REGION_CODE_TO_DEPLOY cloudformation create-stack --template-url {TemplateUrl} --stack-name {StackName} --capabilities CAPABILITY_AUTO_EXPAND \
+aws --region ${REGION_CODE_TO_DEPLOY} cloudformation create-stack --template-url {TemplateUrl} --stack-name {StackName} --capabilities CAPABILITY_AUTO_EXPAND \
 --parameter ParameterKey=LayerName,ParameterValue=lambda-layer-kubectl
 ```
 
 On stack create complete, get the stack outputs as below
 
 ```
-$ aws --region REGION_CODE_TO_DEPLOY cloudformation describe-stacks --stack-name {StackName} --query 'Stacks[0].Outputs'
+$ aws --region ${REGION_CODE_TO_DEPLOY} cloudformation describe-stacks --stack-name {StackName} --query 'Stacks[0].Outputs'
 [
     {
         "Description": "ARN for the published Layer version", 
@@ -172,7 +227,7 @@ $ cd lambda-layer-kubectl-master
 or just 
 
 ```
-$ git clone https://github.com/pahud/lambda-layer-kubectl.git
+$ git clone https://github.com/aws-samples/aws-lambda-layer-kubectl.git
 ```
 
 2. build the `layer.zip` bundle

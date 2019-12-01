@@ -41,9 +41,9 @@ RUN yum install -y zip
 #
 COPY --from=builder /opt/awscli/lib/python2.7/site-packages/ /opt/awscli/ 
 COPY --from=builder /opt/awscli/bin/ /opt/awscli/bin/ 
-COPY --from=builder /opt/awscli/bin/aws /opt/awscli/aws; 
-COPY --from=builder /opt/awscli/jq /opt/awscli/jq; 
-COPY --from=builder /usr/bin/make /opt/awscli/make; 
+COPY --from=builder /opt/awscli/bin/aws /opt/awscli/aws
+COPY --from=builder /opt/awscli/jq /opt/awscli/jq
+COPY --from=builder /usr/bin/make /opt/awscli/make
 
 #
 # kubectl
@@ -64,3 +64,10 @@ RUN rm -rf /opt/awscli/pip* /opt/awscli/setuptools* /opt/awscli/awscli/examples
 RUN cd /opt; zip -r ../layer.zip *; \
 echo "/layer.zip is ready"; \
 ls -alh /layer.zip;
+
+# get the version number
+RUN grep "__version__" /opt/awscli/awscli/__init__.py | egrep -o "1.[0-9.]+" | tee /AWSCLI_VERSION
+RUN /opt/helm/helm version 2>&1 | tee /HELM_VERSION
+RUN /opt/kubectl/kubectl version 2>&1 | tee /KUBECTL_VERSION
+RUN /opt/awscli/jq --version  2>&1 | tee /JQ_VERSION
+RUN /opt/awscli/make --version  2>&1 | tee /MAKE_VERSION
