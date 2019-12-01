@@ -8,12 +8,12 @@ LAMBDA_REGION ?= ap-northeast-1
 LAMBDA_FUNC_NAME ?= eks-kubectl
 LATEST_LAYER_ARN ?= $(shell aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAYER_NAME)-stack" --query 'Stacks[0].Outputs[0].OutputValue'  --output text)
 LATEST_LAYER_VER ?= $(shell echo $(LATEST_LAYER_ARN) | cut -d: -f8)
-LAMBDA_ROLE_ARN ?= arn:aws:iam::903779448426:role/EKSLambdaDrainer
 CLUSTER_NAME ?= default
 ifdef INPUT_YAML
 INPUT_JSON = event.json
 endif
 AWS_PROFILE ?= default
+SEMANTIC_VERSION ?= 2.0.0-beta1
 
 
 .PHONY: build 
@@ -34,16 +34,27 @@ sam-layer-package:
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
 	-e AWS_PROFILE=$(AWS_PROFILE) \
 	pahud/aws-sam-cli:latest sam package --template-file sam-layer.yaml --s3-bucket $(S3BUCKET) --output-template-file sam-layer-packaged.yaml
-	@echo "[OK] Now type 'make sam-layer-deploy' to deploy your Lambda layer with SAM"
+	@echo "[OK] Now type 'make sam-layer-deploy' to deploy your Lambda layer with SAM or 'make publish-new-version-to-sar' to publish to SAR"
+
+# .PHONY: sam-layer-publish
+# sam-layer-publish:
+# 	@docker run -ti \
+# 	-v $(PWD):/home/samcli/workdir \
+# 	-v $(HOME)/.aws:/home/samcli/.aws \
+# 	-w /home/samcli/workdir \
+# 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
+# 	pahud/aws-sam-cli:latest sam publish --region $(LAMBDA_REGION) --template sam-layer-packaged.yaml
 
 .PHONY: sam-layer-publish
 sam-layer-publish:
-	@docker run -ti \
+	@docker run -i $(EXTRA_DOCKER_ARGS) \
 	-v $(PWD):/home/samcli/workdir \
 	-v $(HOME)/.aws:/home/samcli/.aws \
 	-w /home/samcli/workdir \
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	pahud/aws-sam-cli:latest sam publish --region $(LAMBDA_REGION) --template sam-layer-packaged.yaml
+	pahud/aws-sam-cli:latest sam publish --region $(LAMBDA_REGION) --template sam-layer-packaged.yaml \
+	--semantic-version $(SEMANTIC_VERSION)
+	@echo "=> version $(SEMANTIC_VERSION) published to $(LAMBDA_REGION)"
 
 .PHONY: sam-layer-deploy
 sam-layer-deploy:
@@ -165,6 +176,10 @@ update-func-conf:
 
 .PHONY: layer-all
 layer-all: layer-zip layer-upload layer-publish
+
+.PHONY: publish-new-layerversion-to-sar
+publish-new-layerversion-to-sar:
+	@LAMBDA_REGION=us-east-1 make clean layer-build sam-layer-package sam-layer-publish
 
 .PHONY: func-all
 func-all: func-zip update-func
