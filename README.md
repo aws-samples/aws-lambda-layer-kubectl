@@ -164,7 +164,7 @@ or play with it at https://play-with-cdk.com?s=99acb08caf74fc982ebfa931da476888
 Alternatively, you may deploy it with AWS CLI.
 
 
-```
+```sh
 $ APP_ID='arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl'
 
 $ LATEST_VERSION=$(aws serverlessrepo get-application --application-id ${APP_ID} --query 'Version.SemanticVersion' --output text)
@@ -189,14 +189,14 @@ $ aws --region ${REGION_CODE_TO_DEPLOY} serverlessrepo create-cloud-formation-te
 Copy the `TemplateUrl` value and deploy with `cloudformation create-stack`
 
 
-```
+```sh
 aws --region ${REGION_CODE_TO_DEPLOY} cloudformation create-stack --template-url {TemplateUrl} --stack-name {StackName} --capabilities CAPABILITY_AUTO_EXPAND \
 --parameter ParameterKey=LayerName,ParameterValue=lambda-layer-kubectl
 ```
 
 On stack create complete, get the stack outputs as below
 
-```
+```sh
 $ aws --region ${REGION_CODE_TO_DEPLOY} cloudformation describe-stacks --stack-name {StackName} --query 'Stacks[0].Outputs'
 [
     {
@@ -218,7 +218,7 @@ Now you got your own private Lambda Layer Arn for `lambda-layer-kubectl`.
 
 1. check out this repository 
 
-```
+```sh
 $ curl -L -o lambda-layer-kubectl.zip https://github.com/pahud/lambda-layer-kubectl/archive/master.zip
 $ unzip lambda-layer-kubectl.zip
 $ cd lambda-layer-kubectl-master
@@ -226,14 +226,14 @@ $ cd lambda-layer-kubectl-master
 
 or just 
 
-```
+```sh
 $ git clone https://github.com/aws-samples/aws-lambda-layer-kubectl.git
 ```
 
 2. build the `layer.zip` bundle
 
 
-```
+```sh
 # build the layer locally and bundle everything into a layer.zip file
 $ make build
 ```
@@ -259,7 +259,7 @@ $ make build
 
 Please note your IAM role for Lambda will need `eks:DescribeCluster` as well as other ec2 read-only privileges depending on what you intend to do in your Lambda function. You may attach an inline policy as below to your Lambda IAM role.
 
-```
+```js
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -281,7 +281,7 @@ Please note your IAM role for Lambda will need `eks:DescribeCluster` as well as 
 
 4. Deploy the Layer
 
-```
+```sh
 # deploy and publish the layer.zip as a layer version
 $ make sam-layer-deploy
 ```
@@ -306,12 +306,13 @@ Behind the scene, the Lambda custom runtime will execute the `bootstrap` executa
 Let's deploy the provided lambda function sample with the provided Makefile.
 
 prepare the function and populate into `./func.d`
-```
+```sh
 # copy everything required to ./func.d directory
 $ make func-prep
 ```
 you got the following files in `./func.d` directory
-```
+
+```sh
 $ tree -L 2 ./func.d/
 ./func.d/
 ├── bootstrap
@@ -322,7 +323,7 @@ $ tree -L 2 ./func.d/
 ```
 
 Let's deploy our lambda func with `SAM`. Let's say if our EKS cluster name is `eksnrt`, we'd deploy the function like this:
-```
+```sh
 $ CLUSTER_NAME=eksnrt make sam-deploy
 ```
 
@@ -345,7 +346,7 @@ To `kubeclt get nodes`, `kubectl get pods` or `kubectl apply -f REMOTE_URL` just
 
 
 
-```
+```sh
 #!/bin/bash
 # pahud/lambda-layer-kubectl for Amazon EKS
 
@@ -381,13 +382,13 @@ exit 0
 
 And publish your function again
 
-```
+```sh
 $ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
 ```
 
 Invoke
 
-```
+```sh
 $ INPUT_YAML=nginx.yaml make invoke
 ```
 
@@ -401,7 +402,7 @@ To pass through the local `yaml` file to lambda and execute `kubectl apply -f`
 
 
 
-```
+```sh
 #!/bin/bash
 # pahud/lambda-layer-kubectl for Amazon EKS
 
@@ -419,7 +420,7 @@ exit 0
 
 Update the function
 
-```
+```sh
 $ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
 ```
 
@@ -427,7 +428,7 @@ $ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
 
 Invoke
 
-```
+```sh
 $ INPUT_YAML=nginx.yaml make invoke
 ```
 
@@ -437,14 +438,14 @@ Response
 
 To specify different `cluster_name` with the default one in environment variable:
 
-```
+```sh
 $ CLUSTER_NAME="another_cluster_name" INPUT_YAML=nginx.yaml make invoke
 ```
 
 
 kubectl apply -f `REMOTE_URL` like this
 
-```
+```sh
 $ INPUT_YAML_URLS="URL1 URL2 URL3" make invoke
 ```
 
@@ -459,11 +460,11 @@ I hope you find it useful and have fun with this project! Issues and PRs are ver
 # clean up
 
 clean up the function
-```
+```sh
 $ make sam-destroy
 ```
 clean up the layer
-```
+```sh
 $ make sam-layer-destroy
 ```
 
