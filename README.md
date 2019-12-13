@@ -234,6 +234,7 @@ $ git clone https://github.com/aws-samples/aws-lambda-layer-kubectl.git
 
 
 ```
+# build the layer locally and bundle everything into a layer.zip file
 $ make build
 ```
 
@@ -278,48 +279,35 @@ Please note your IAM role for Lambda will need `eks:DescribeCluster` as well as 
 
 
 
-4. Build the Layer
+4. Deploy the Layer
 
 ```
-$ make sam-layer-package sam-layer-deploy
+# deploy and publish the layer.zip as a layer version
+$ make sam-layer-deploy
 ```
 
-This will bundle the layer and publish a version for this layer. You should see the return as below:
+This will deploy the `layer.zip` and publish as a new layer version. 
 
-```
-$ make sam-layer-package sam-layer-deploy
-Uploading to 2494b2751b38bc31f3afa88596917ec0  31986657 / 31986657.0  (100.00%)
-Successfully packaged artifacts and wrote output template to file sam-layer-packaged.yaml.
-Execute the following command to deploy the packaged template
-aws cloudformation deploy --template-file /home/samcli/workdir/sam-layer-packaged.yaml --stack-name <YOUR STACK NAME>
-[OK] Now type 'make sam-layer-deploy' to deploy your Lambda layer with SAM
-
-Waiting for changeset to be created..
-Waiting for stack create/update to complete
-Successfully created/updated stack - eks-kubectl-layer-stack
-# print the cloudformation stack outputs
-aws --region ap-northeast-1 cloudformation describe-stacks --stack-name "eks-kubectl-layer-stack" --query 'Stacks[0].Outputs'
-[
-    {
-        "Description": "ARN for the published Layer version", 
-        "ExportName": "LayerVersionArn-eks-kubectl-layer-stack", 
-        "OutputKey": "LayerVersionArn", 
-        "OutputValue": "arn:aws:lambda:ap-northeast-1:xxxxxxxxx:layer:layer-eks-kubectl-layer-stack:2"
-    }
-]
-[OK] Layer version deployed.
-```
-
-OK. Now your layer is ready. Very simple, isn't it?  
-
-Please copy the value of `OutputValue` above.
+![](images/sam-layer-deploy.png)
 
 
 
-5. create the lambda function
+OK. Now your layer is ready.
+
+Please copy the value of `OutputValue`.
+
+
+## Write your first Lambda function with the `kubectl` lambda layer
+
+Now your kubectl layer is ready, you can write a Lambda function with custom runtime to run a bash script and execute the `kubectl` executable provided from the layer.
+
+Behind the scene, the Lambda custom runtime will execute the `bootstrap` executable to generate `kubeconfig` automatically(see [details](https://github.com/aws-samples/aws-lambda-layer-kubectl/blob/8add6c3b7aa733c8ed67b89b1882fe2fae73124b/bootstrap#L17-L23)) followed by running the `main.sh` and all we need to is simply implement our logic in the `main.sh`. The following example demonstrates how to deploy a lambda custom runtime with a provided `bootstrap` executable that invokes `main.sh` and we just need to script in `main.sh` to run regular `kubectl` commands.
+
+Let's deploy the provided lambda function sample with the provided Makefile.
 
 prepare the function and populate into `./func.d`
 ```
+# copy everything required to ./func.d directory
 $ make func-prep
 ```
 you got the following files in `./func.d` directory
@@ -335,38 +323,10 @@ $ tree -L 2 ./func.d/
 
 Let's deploy our lambda func with `SAM`. Let's say if our EKS cluster name is `eksnrt`, we'd deploy the function like this:
 ```
-$ CLUSTER_NAME=eksnrt make sam-package sam-deploy
-
-Successfully packaged artifacts and wrote output template to file packaged.yaml.
-Execute the following command to deploy the packaged template
-aws cloudformation deploy --template-file /home/samcli/workdir/packaged.yaml --stack-name <YOUR STACK NAME>
-
-Waiting for changeset to be created..
-Waiting for stack create/update to complete
-Successfully created/updated stack - eks-kubectl-stack
-# print the cloudformation stack outputs
-aws --region ap-northeast-1 cloudformation describe-stacks --stack-name "eks-kubectl-stack" --query 'Stacks[0].Outputs'
-[
-    {
-        "Description": "Lambda Func Name", 
-        "ExportName": "LambdaFuncName-eks-kubectl-stack", 
-        "OutputKey": "LambdaFuncName", 
-        "OutputValue": "eks-kubectl"
-    }, 
-    {
-        "Description": "Lambda Func ARN", 
-        "ExportName": "LambdaFuncArn-eks-kubectl-stack", 
-        "OutputKey": "LambdaFuncArn", 
-        "OutputValue": "arn:aws:lambda:ap-northeast-1:xxxxxxxx:function:eks-kubectl"
-    }, 
-    {
-        "Description": "Lambda Role ARN", 
-        "ExportName": "LambdaRoleArn-eks-kubectl-stack", 
-        "OutputKey": "LambdaRoleArn", 
-        "OutputValue": "arn:aws:iam::xxxxxxxx:role/LambdaEKSAdminRole"
-    }
-]
+$ CLUSTER_NAME=eksnrt make sam-deploy
 ```
+
+![](images/sam-deploy.png)
 
 If you check the lambda function you'll see an environment variable `cluster_name=eksnrt` is assigned, which will be processed with `kubectl` in Lambda.
 

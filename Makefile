@@ -64,10 +64,13 @@ sam-layer-deploy:
 	-w /home/samcli/workdir \
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
 	-e AWS_PROFILE=$(AWS_PROFILE) \
-	pahud/aws-sam-cli:latest sam deploy --template-file ./sam-layer-packaged.yaml --stack-name "$(LAYER_NAME)-stack" \
+	pahud/aws-sam-cli:latest sam deploy --s3-bucket $(S3BUCKET) \
+	--template-file ./sam-layer-packaged.yaml \
+	--stack-name "$(LAYER_NAME)-stack" \
 	--parameter-overrides LayerName=$(LAYER_NAME) \
+	--capabilities CAPABILITY_IAM
 	# print the cloudformation stack outputs
-	aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAYER_NAME)-stack" --query 'Stacks[0].Outputs'
+	@aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAYER_NAME)-stack" --query 'Stacks[0].Outputs'
 	@echo "[OK] Layer version deployed."
 	
 .PHONY: sam-layer-info
@@ -126,10 +129,11 @@ sam-deploy:
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
 	-e AWS_PROFILE=$(AWS_PROFILE) \
 	pahud/aws-sam-cli:latest sam deploy \
+	--s3-bucket $(S3BUCKET) \
 	--parameter-overrides ClusterName=$(CLUSTER_NAME) FunctionName=$(LAMBDA_FUNC_NAME) \
-	--template-file ./packaged.yaml --stack-name "$(LAMBDA_FUNC_NAME)-stack" --capabilities CAPABILITY_IAM
+	--template-file sam.yaml --stack-name "$(LAMBDA_FUNC_NAME)-stack" --capabilities CAPABILITY_IAM
 	# print the cloudformation stack outputs
-	aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAMBDA_FUNC_NAME)-stack" --query 'Stacks[0].Outputs'
+	@aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(LAMBDA_FUNC_NAME)-stack" --query 'Stacks[0].Outputs'
 
 
 .PHONY: sam-destroy
