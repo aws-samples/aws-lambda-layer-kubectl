@@ -23,7 +23,7 @@ ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/am
 RUN chmod +x /opt/kubectl/kubectl
 
 # download helm v3
-RUN mkdir -p /opt/helm && wget -qO- https://get.helm.sh/helm-v3.0.0-linux-amd64.tar.gz | tar -xz -C /opt/helm/
+RUN mkdir -p /opt/helm && wget -qO- https://get.helm.sh/helm-v3.0.3-linux-amd64.tar.gz | tar -xz -C /opt/helm/
   
 #
 # prepare the runtime at /opt/kubectl
