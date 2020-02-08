@@ -141,7 +141,7 @@ export class AppStack extends cdk.Stack {
         const samApp = new sam.CfnApplication(this, 'SamLayer', {
           location: {
             applicationId: 'arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl',
-            semanticVersion: '2.0.0-beta1'
+            semanticVersion: '2.0.0-beta2'
           },
           parameters: {
             LayerName: `${this.stackName}-kubectl-layer`
