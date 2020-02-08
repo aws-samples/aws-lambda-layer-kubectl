@@ -13,7 +13,7 @@ ifdef INPUT_YAML
 INPUT_JSON = event.json
 endif
 AWS_PROFILE ?= default
-SEMANTIC_VERSION ?= 2.0.0-beta1
+SEMANTIC_VERSION ?= 2.0.0-beta2
 
 
 .PHONY: build 
