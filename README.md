@@ -383,7 +383,7 @@ exit 0
 And publish your function again
 
 ```sh
-$ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
+$ CLUSTER_NAME=eksnrt make func-prep sam-deploy
 ```
 
 Invoke
@@ -421,7 +421,7 @@ exit 0
 Update the function
 
 ```sh
-$ CLUSTER_NAME=eksnrt make func-prep sam-package sam-deploy
+$ CLUSTER_NAME=eksnrt make func-prep sam-deploy
 ```
 
 
