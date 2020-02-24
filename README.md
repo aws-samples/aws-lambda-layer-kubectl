@@ -322,7 +322,17 @@ $ tree -L 2 ./func.d/
 0 directories, 3 files
 ```
 
-Let's deploy our lambda func with `SAM`. Let's say if our EKS cluster name is `eksnrt`, we'd deploy the function like this:
+Let's deploy our lambda func with `SAM`. Edit the `sam.yaml` and update your `Layer` ARN to point your deployed layer ARN. This will make sure your Lambda function will include the correct Layer you have previously deployed.
+
+```yaml
+ Layers:
+        - !Sub "arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:layer:layer-eks-kubectl-layer-stack:2"
+```
+See https://github.com/aws-samples/aws-lambda-layer-kubectl/blob/5963abf5ba94cf0c4298675ae8cbfd2569c81873/sam.yaml#L22
+
+
+
+Let's say if our EKS cluster name is `eksnrt`, we'd deploy the function like this:
 ```sh
 $ CLUSTER_NAME=eksnrt make sam-deploy
 ```
