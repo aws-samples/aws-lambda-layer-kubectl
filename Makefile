@@ -52,6 +52,7 @@ sam-layer-publish:
 	-v $(HOME)/.aws:/home/samcli/.aws \
 	-w /home/samcli/workdir \
 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
+	-e AWS_PROFILE=$(AWS_PROFILE) \
 	pahud/aws-sam-cli:latest sam publish --region $(LAMBDA_REGION) --template sam-layer-packaged.yaml \
 	--semantic-version $(SEMANTIC_VERSION)
 	@echo "=> version $(SEMANTIC_VERSION) published to $(LAMBDA_REGION)"
@@ -184,6 +185,10 @@ layer-all: layer-zip layer-upload layer-publish
 .PHONY: publish-new-layerversion-to-sar
 publish-new-layerversion-to-sar:
 	@LAMBDA_REGION=us-east-1 make clean layer-build sam-layer-package sam-layer-publish
+
+	.PHONY: publish-new-layerversion-to-sar-cn
+publish-new-layerversion-to-sar-cn:
+	@LAMBDA_REGION=cn-north-1 make clean layer-build sam-layer-package sam-layer-publish
 
 .PHONY: func-all
 func-all: func-zip update-func
