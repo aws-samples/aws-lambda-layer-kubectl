@@ -297,7 +297,31 @@ OK. Now your layer is ready.
 Please copy the value of `OutputValue`.
 
 
+## Build and Publish your Layer to SAR(Serverless App Repository)
+
+publish to SAR in `us-east-1` for AWS global regions
+```bash
+$ AWS_PROFILE={PORFILE_NAME} LAMBDA_REGION=cn-north-1 S3BUCKET={YOUR_STAGING_BUCKET} SAR_APP_NAME={YOUR_SAR_APP_NAME} make publish-new-layerversion-to-sar
+```
+
+This will publish your layer as `{YOUR_SAR_APP_NAME}` to SAR(Serverless App Repository). You can optionally make it public in your SAR console.
+
+## Note for AWS China regions
+
+publish to SAR in `cn-north-1` for AWS China regions
+```bash
+$ AWS_PROFILE={PORFILE_NAME} LAMBDA_REGION=cn-north-1 S3BUCKET={YOUR_STAGING_BUCKET} SAR_APP_NAME={YOUR_SAR_APP_NAME} make publish-new-layerversion-to-sar-cn
+```
+
+If you have successfully published to `cn-north-1` in AWS China region, the SAR URL would be:
+```
+https://console.amazonaws.cn/serverlessrepo/home?region=cn-north-1#/published-applications/arn:aws-cn:serverlessrepo:cn-north-1:{AWS_ACCOUNT_ID}:applications~lambda-layer-kubectl
+```
+
+
 ## Write your first Lambda function with the `kubectl` lambda layer
+
+
 
 Now your kubectl layer is ready, you can write a Lambda function with custom runtime to run a bash script and execute the `kubectl` executable provided from the layer.
 
