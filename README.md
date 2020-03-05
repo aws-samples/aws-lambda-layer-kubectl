@@ -306,7 +306,7 @@ Please copy the value of `OutputValue`.
 
 publish to SAR in `us-east-1` for AWS global regions
 ```bash
-$ AWS_PROFILE={PORFILE_NAME} LAMBDA_REGION=cn-north-1 S3BUCKET={YOUR_STAGING_BUCKET} SAR_APP_NAME={YOUR_SAR_APP_NAME} make publish-new-layerversion-to-sar
+$ AWS_DEFAULT_PROFILE={PORFILE_NAME} LAMBDA_REGION=cn-north-1 S3BUCKET={YOUR_STAGING_BUCKET} SAR_APP_NAME={YOUR_SAR_APP_NAME} make publish-new-layerversion-to-sar
 ```
 
 This will publish your layer as `{YOUR_SAR_APP_NAME}` to SAR(Serverless App Repository). You can optionally make it public in your SAR console.
@@ -315,7 +315,7 @@ This will publish your layer as `{YOUR_SAR_APP_NAME}` to SAR(Serverless App Repo
 
 publish to SAR in `cn-north-1` for AWS China regions
 ```bash
-$ AWS_PROFILE={PORFILE_NAME} LAMBDA_REGION=cn-north-1 S3BUCKET={YOUR_STAGING_BUCKET} SAR_APP_NAME={YOUR_SAR_APP_NAME} make publish-new-layerversion-to-sar-cn
+$ AWS_DEFAULT_PROFILE={PORFILE_NAME} LAMBDA_REGION=cn-north-1 S3BUCKET={YOUR_STAGING_BUCKET} SAR_APP_NAME={YOUR_SAR_APP_NAME} make publish-new-layerversion-to-sar-cn
 ```
 
 If you have successfully published to `cn-north-1` in AWS China region, the SAR URL would be:
