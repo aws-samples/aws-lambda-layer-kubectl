@@ -27,13 +27,16 @@ layer-build:
 
 .PHONY: sam-layer-package
 sam-layer-package:
-	@docker run -ti \
+	@docker run -t \
 	-v $(PWD):/home/samcli/workdir \
-	-v $(HOME)/.aws:/home/samcli/.aws \
+	-v $(HOME)/.aws:/root/.aws \
 	-w /home/samcli/workdir \
-	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	-e AWS_PROFILE=$(AWS_PROFILE) \
-	pahud/aws-sam-cli:latest sam package --template-file sam-layer.yaml --s3-bucket $(S3BUCKET) --output-template-file sam-layer-packaged.yaml
+	-u root \
+	-e AWS_DEFAULT_PROFILE \
+	-e AWS_CONTAINER_CREDENTIALS_RELATIVE_URI \
+	pahud/aws-sam-cli:latest sam package --template-file sam-layer.yaml \
+	--s3-bucket $(S3BUCKET) --output-template-file sam-layer-packaged.yaml \
+	--region $(LAMBDA_REGION)
 	@echo "[OK] Now type 'make sam-layer-deploy' to deploy your Lambda layer with SAM or 'make publish-new-version-to-sar' to publish to SAR"
 
 # .PHONY: sam-layer-publish
@@ -49,23 +52,26 @@ sam-layer-package:
 sam-layer-publish:
 	@docker run -i $(EXTRA_DOCKER_ARGS) \
 	-v $(PWD):/home/samcli/workdir \
-	-v $(HOME)/.aws:/home/samcli/.aws \
+	-v $(HOME)/.aws:/root/.aws \
 	-w /home/samcli/workdir \
-	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	-e AWS_PROFILE=$(AWS_PROFILE) \
+	-u root \
+	-e AWS_DEFAULT_PROFILE \
+	-e AWS_CONTAINER_CREDENTIALS_RELATIVE_URI \
 	pahud/aws-sam-cli:latest sam publish --region $(LAMBDA_REGION) --template sam-layer-packaged.yaml \
 	--semantic-version $(SEMANTIC_VERSION)
 	@echo "=> version $(SEMANTIC_VERSION) published to $(LAMBDA_REGION)"
 
 .PHONY: sam-layer-deploy
 sam-layer-deploy:
-	@docker run -ti \
+	@docker run -t \
 	-v $(PWD):/home/samcli/workdir \
-	-v $(HOME)/.aws:/home/samcli/.aws \
+	-v $(HOME)/.aws:/root/.aws \
 	-w /home/samcli/workdir \
-	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	-e AWS_PROFILE=$(AWS_PROFILE) \
+	-u root \
+	-e AWS_DEFAULT_PROFILE \
+	-e AWS_CONTAINER_CREDENTIALS_RELATIVE_URI \
 	pahud/aws-sam-cli:latest sam deploy --s3-bucket $(S3BUCKET) \
+	--region $(LAMBDA_REGION) \
 	--template-file ./sam-layer-packaged.yaml \
 	--stack-name "$(LAYER_NAME)-stack" \
 	--parameter-overrides LayerName=$(LAYER_NAME) \
@@ -112,25 +118,30 @@ sam-layer-destroy:
 	
 .PHONY: sam-package
 sam-package:
-	@docker run -ti \
+	@docker run -t \
 	-v $(PWD):/home/samcli/workdir \
-	-v $(HOME)/.aws:/home/samcli/.aws \
+	-v $(HOME)/.aws:/root/.aws \
 	-w /home/samcli/workdir \
-	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	-e AWS_PROFILE=$(AWS_PROFILE) \
-	pahud/aws-sam-cli:latest sam package --template-file sam.yaml --s3-bucket $(S3BUCKET) --output-template-file packaged.yaml
+	-u root \
+	-e AWS_DEFAULT_PROFILE \
+	-e AWS_CONTAINER_CREDENTIALS_RELATIVE_URI \
+	pahud/aws-sam-cli:latest sam package --template-file sam.yaml \
+	--region $(LAMBDA_REGION) \
+	--s3-bucket $(S3BUCKET) --output-template-file packaged.yaml
 
 
 .PHONY: sam-deploy
 sam-deploy:
-	@docker run -ti \
+	@docker run -t \
 	-v $(PWD):/home/samcli/workdir \
-	-v $(HOME)/.aws:/home/samcli/.aws \
+	-v $(HOME)/.aws:/root/.aws \
 	-w /home/samcli/workdir \
-	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-	-e AWS_PROFILE=$(AWS_PROFILE) \
+	-u root \
+	-e AWS_DEFAULT_PROFILE \
+	-e AWS_CONTAINER_CREDENTIALS_RELATIVE_URI \
 	pahud/aws-sam-cli:latest sam deploy \
 	--s3-bucket $(S3BUCKET) \
+	--region $(LAMBDA_REGION) \
 	--parameter-overrides ClusterName=$(CLUSTER_NAME) FunctionName=$(LAMBDA_FUNC_NAME) \
 	--template-file sam.yaml --stack-name "$(LAMBDA_FUNC_NAME)-stack" --capabilities CAPABILITY_IAM
 	# print the cloudformation stack outputs
@@ -186,7 +197,7 @@ layer-all: layer-zip layer-upload layer-publish
 publish-new-layerversion-to-sar:
 	@LAMBDA_REGION=us-east-1 make clean layer-build sam-layer-package sam-layer-publish
 
-	.PHONY: publish-new-layerversion-to-sar-cn
+.PHONY: publish-new-layerversion-to-sar-cn
 publish-new-layerversion-to-sar-cn:
 	@LAMBDA_REGION=cn-north-1 make clean layer-build sam-layer-package sam-layer-publish
 
