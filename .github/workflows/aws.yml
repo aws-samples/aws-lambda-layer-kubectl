@@ -1,0 +1,23 @@
+on:
+  release:
+    types: 
+      - published
+
+name: Trigger release deployment build in AWS regions
+
+jobs:
+  trigger-job:
+    name: Release Trigger
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Trigger build of SAR deployment on AWS CN regions
+      id: trigger-aws-cn-build-of-codebuild
+      env:
+        RELEASE_TAG: ${{ github.ref }}
+        BUILD_URL: ${{ secrets.AWS_CN_BUILD_URL }}
+      run: |
+        # Trigger starting build of CodeBuild to deploy the release to SAR
+        curl -X PUT $BUILD_URL?version=$RELEASE_TAG
+
+   
