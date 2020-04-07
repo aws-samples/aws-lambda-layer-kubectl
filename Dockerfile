@@ -19,12 +19,12 @@ RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
 
 
 # download kubectl
-ADD https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl /opt/kubectl/
+ADD https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/kubectl /opt/kubectl/
 RUN chmod +x /opt/kubectl/kubectl
 
 # download helm v3
-RUN mkdir -p /opt/helm && wget -qO- https://get.helm.sh/helm-v3.0.3-linux-amd64.tar.gz | tar -xz -C /opt/helm/
-  
+RUN mkdir -p /opt/helm && wget -qO- https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz | tar -xz -C /opt/helm/
+
 #
 # prepare the runtime at /opt/kubectl
 

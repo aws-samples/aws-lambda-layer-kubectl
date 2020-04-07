@@ -19,10 +19,10 @@
 
 ## Current Version
 
-| kubectl      | v1.14.7-eks-1861c5     |
+| kubectl      | v1.15.10-eks-bac369     |
 | :----------- | :----------- |
-| **awscli**   | **1.17.13** |
-| **helm**     | **3.0.3**    |
+| **awscli**   | **1.18.37** |
+| **helm**     | **3.1.2**    |
 | **jq**       | **1.6**      |
 | **GNU Make** | **3.82**     |
 
@@ -146,7 +146,7 @@ export class AppStack extends cdk.Stack {
         const samApp = new sam.CfnApplication(this, 'SamLayer', {
           location: {
             applicationId: 'arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl',
-            semanticVersion: '2.0.0-beta2'
+            semanticVersion: '2.0.0-beta3'
           },
           parameters: {
             LayerName: `${this.stackName}-kubectl-layer`
