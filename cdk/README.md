@@ -92,3 +92,8 @@ Now go to Lambda console and execute your Lambda function manually and see its o
 ![](../images/05.png)
 
 
+## To delete this sample stack
+
+```bash
+$ cdk destroy
+```
