@@ -5,16 +5,15 @@
 
 # lambda-layer-kubectl
 
-**aws-lambda-layer-kubectl** is an [AWS Lambda Layer](https://docs.aws.amazon.com/en_us/lambda/latest/dg/configuration-layers.html) that encapsulates all the required assets to interact with **Amazon EKS** control plane and help you directly **`kubectl`** against Amazon EKS in AWS Lambda.
+**aws-lambda-layer-kubectl** is an [AWS Lambda Layer](https://docs.aws.amazon.com/en_us/lambda/latest/dg/configuration-layers.html) that bundles with all the required assets to interact with **Amazon EKS** control plane and help you directly **`kubectl`** with the Kubernetes API from Amazon EKS in AWS Lambda.
 
 
 
 ## Features
 
-- [x] Ships all the required assests including **kubectl**, **aws-cli**, **make** and **jq** Just include the layer and you get everything required.
-- [x] **Helm 3** included.
-- [x] Amazon EKS authentication under the hood on bootstrap.
-
+- [x] ships all the required assests including **kubectl**, **aws-cli**, **make** and **jq** Just include the layer and you get everything required.
+- [x] **helm 3** included.
+- [x] native support for lambda custom runtime
 
 
 ## Current Version
