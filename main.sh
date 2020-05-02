@@ -26,22 +26,4 @@ fi
 
 ######## your business logic starting here #############
 
-
-# retrieve the YAML data payload and kubectl apply -f on it
-data=$(echo $1 | jq -r '.data | select(type == "string")' | base64 -d)
-if [ "$data" != "" ]; then
-    echo "input data not empty, trying to apply yaml"
-    echo "$data" | kubectl apply -f - 2>&1
-fi
-
-# retrieve the YAML URLs and kubectl apply -f on them one-by-one
-input_yaml_urls=$(echo $1 | jq -r '.input_yaml_urls | select(type == "string")') 
-if [ ${#input_yaml_urls[@]} -gt 0 ]; then
-    for u in ${input_yaml_urls}
-    do
-        kubectl apply -f "$u" 2>&1
-    done
-fi
-
-
 exit 0
