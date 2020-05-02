@@ -324,195 +324,48 @@ https://console.amazonaws.cn/serverlessrepo/home?region=cn-north-1#/published-ap
 ```
 
 
-## Write your first Lambda function with the `kubectl` lambda layer
+## Deploy the sample stack with AWS CDK
 
+The following sample provision an Amazon EKS cluster and sample lambda function with kubectl lambda layer and you can write your logic in `main.sh`
 
+```ts
+    const cluster = new eks.Cluster(this, 'EksCluster', {
+      vpc,
+      mastersRole
+    })
 
-Now your kubectl layer is ready, you can write a Lambda function with custom runtime to run a bash script and execute the `kubectl` executable provided from the layer.
+    // publih a layer version from the layer.zip we built from build.sh
+    const layerVersion = new lambda.LayerVersion(this, 'cdk-aws-lambda-layer-kubectl', {
+      code: new lambda.AssetCode( path.join(__dirname, '../../layer.zip')),
+      compatibleRuntimes: [ lambda.Runtime.PROVIDED ]
+    })
 
-Behind the scene, the Lambda custom runtime will execute the `bootstrap` executable to generate `kubeconfig` automatically(see [details](https://github.com/aws-samples/aws-lambda-layer-kubectl/blob/8add6c3b7aa733c8ed67b89b1882fe2fae73124b/bootstrap#L17-L23)) followed by running the `main.sh` and all we need to is simply implement our logic in the `main.sh`. The following example demonstrates how to deploy a lambda custom runtime with a provided `bootstrap` executable that invokes `main.sh` and we just need to script in `main.sh` to run regular `kubectl` commands.
+    // create a lambda function with this layer
+    const fn = new lambda.Function(this, 'KubectlLayerDemoFunc', {
+      code: new lambda.AssetCode(path.join(__dirname, '../../func-bundle.zip')),
+      handler: 'main',
+      runtime: lambda.Runtime.PROVIDED,
+      layers: [ layerVersion ],
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
+      environment: {
+        'cluster_name': cluster.clusterName,
+      }
+    })
 
-Let's deploy the provided lambda function sample with the provided Makefile.
-
-prepare the function and populate into `./func.d`
-```sh
-# copy everything required to ./func.d directory
-$ make func-prep
+    // add describe cluster permission to the lambda role
+    fn.role!.addToPolicy(new iam.PolicyStatement({
+      actions: [ 'eks:DescribeCluster' ],
+      resources: [ cluster.clusterArn ]
+    }))
+    // add the lambda func role to the aws-auth config map as system:masters
+    cluster.awsAuth.addMastersRole(fn.role!)
 ```
-you got the following files in `./func.d` directory
-
-```sh
-$ tree -L 2 ./func.d/
-./func.d/
-├── bootstrap
-├── libs.sh
-└── main.sh
-
-0 directories, 3 files
-```
-
-Let's deploy our lambda func with `SAM`. Edit the `sam.yaml` and update your `Layer` ARN to point your deployed layer ARN. This will make sure your Lambda function will include the correct Layer you have previously deployed.
-
-```yaml
- Layers:
-        - !Sub "arn:aws:lambda:ap-northeast-1:${AWS::AccountId}:layer:layer-eks-kubectl-layer-stack:2"
-```
-See https://github.com/aws-samples/aws-lambda-layer-kubectl/blob/5963abf5ba94cf0c4298675ae8cbfd2569c81873/sam.yaml#L22
-
-
-
-Let's say if our EKS cluster name is `eksnrt`, we'd deploy the function like this:
-```sh
-$ CLUSTER_NAME=eksnrt make sam-deploy
-```
-
-![](images/sam-deploy.png)
-
-If you check the lambda function you'll see an environment variable `cluster_name=eksnrt` is assigned, which will be processed with `kubectl` in Lambda.
-
-
-6. Enable Lambda function to call Amazon EKS master API
-
-Update the `aws-auth-cm.yaml` described in [Amazon EKS User Guide - getting started](https://docs.aws.amazon.com/en_us/eks/latest/userguide/getting-started.html). Add an extra `rolearn` section as below to allow your Lambda function map its role as `system:masters` in RBAC.
-
-![](./images/01.png)
-
-
-
-# Test and Validate
-
-To `kubeclt get nodes`, `kubectl get pods` or `kubectl apply -f REMOTE_URL` just edit `main.sh`as below
-
-
-
-```sh
-#!/bin/bash
-# pahud/lambda-layer-kubectl for Amazon EKS
-
-# include the common-used shortcuts
-source libs.sh
-
-# with shortcuts(defined in libs.sh)
-echo "[INFO] listing the nodes..."
-get_nodes
-
-echo "[INFO] listing the pods..."
-get_pods
-
-# or go straight with kubectl
-echo "[INFO] listing the nodes..."
-kubectl get no
-
-echo "[INFO] listing the pods..."
-kubectl get po
-
-# to specify different ns
-echo "[INFO] listing the pods..."
-kubectl -n kube-system get po
-
-# kubectl apply -f REMOTE_URL
-kubectl apply -f http://SOME_REMOTE_URL
-
-# kubectl delete -f REMOTE_URL
-kubectl delete -f http://SOME_REMOTE_URL
-
-exit 0
-```
-
-And publish your function again
-
-```sh
-$ CLUSTER_NAME=eksnrt make func-prep sam-deploy
-```
-
-Invoke
-
-```sh
-$ INPUT_YAML=nginx.yaml make invoke
-```
-
-Response
-
-![](./images/02.png)
-
-
-
-To pass through the local `yaml` file to lambda and execute `kubectl apply -f`
-
-
-
-```sh
-#!/bin/bash
-# pahud/lambda-layer-kubectl for Amazon EKS
-
-# include the common-used shortcuts
-source libs.sh
-
-data=$(echo $1 | jq -r .data | base64 -d)
-
-echo "$data" | kubectl apply -f - 2>&1
-
-exit 0
-```
-
-
-
-Update the function
-
-```sh
-$ CLUSTER_NAME=eksnrt make func-prep sam-deploy
-```
-
-
-
-Invoke
-
-```sh
-$ INPUT_YAML=nginx.yaml make invoke
-```
-
-Response
-
-![](./images/03.png)
-
-To specify different `cluster_name` with the default one in environment variable:
-
-```sh
-$ CLUSTER_NAME="another_cluster_name" INPUT_YAML=nginx.yaml make invoke
-```
-
-
-kubectl apply -f `REMOTE_URL` like this
-
-```sh
-$ INPUT_YAML_URLS="URL1 URL2 URL3" make invoke
-```
-
-e.g.
-
-![](images/04.png)
-
-
-I hope you find it useful and have fun with this project! Issues and PRs are very appreciated.
-
-
-# clean up
-
-clean up the function
-```sh
-$ make sam-destroy
-```
-clean up the layer
-```sh
-$ make sam-layer-destroy
-```
-
-You're done!
+Read the full CDK sample in the [cdk](./cdk/README.md) directory
 
 
 # More Samples
 check [samples](./samples) directory
-
 
 
 ## Cross-Accounts Access
@@ -520,8 +373,6 @@ check [samples](./samples) directory
 In some cases, you may need cross-account access to different Amazon EKS clusters. The idea is to generate different kubeconfig files and feed the lambda function via environment variables. Check [this sample](https://github.com/aws-samples/aws-lambda-layer-kubectl/issues/3) for more details.
 
 ![](images/cross-accounts-01.png)
-
-
 
 
 

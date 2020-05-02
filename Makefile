@@ -156,13 +156,14 @@ sam-destroy:
 
 .PHONY: func-prep	
 func-prep:
-	@[ ! -d ./func.d ] && mkdir ./func.d || true
-	@cp main.sh bootstrap libs.sh ./func.d
+	@echo "=> preparing ./func.d"
+	@[ -d ./func.d ] && rm -rf ./func.d; mkdir ./func.d
+	@cp main.sh bootstrap libs.sh ./func.d && echo "=> DONE"
+	@ls -al ./func.d
 
 .PHONY: func-zip
 func-zip:
-	chmod +x main.sh
-	zip -r func-bundle.zip bootstrap main.sh libs.sh; ls -alh func-bundle.zip
+	cd func.d && zip -r ../func-bundle.zip * && ls -alh ../func-bundle.zip
 	
 	
 .PHONY: create-func	
