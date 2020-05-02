@@ -6,6 +6,8 @@ This sample helps you to provision the following resources in AWS CDK
 - kubectl lambda layer
 - A sample lambda function with custom runtime with the kubectl lambda layer above
 
+After the deployment, you can extend your logic in the `main.sh` just as how you run `kubectl` in the terminal.
+
 
 # prepare the `layer.zip`
 
