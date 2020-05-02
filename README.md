@@ -326,7 +326,7 @@ https://console.amazonaws.cn/serverlessrepo/home?region=cn-north-1#/published-ap
 
 ## Deploy the sample stack with AWS CDK
 
-The following sample provision an Amazon EKS cluster and sample lambda function with kubectl lambda layer and you can write your logic in `main.sh`
+The following sample provisions an Amazon EKS cluster and sample lambda function with kubectl lambda layer and you can extend your logic in [main.sh](./main.sh) for your lambda function with custom runtime.
 
 ```ts
     const cluster = new eks.Cluster(this, 'EksCluster', {
