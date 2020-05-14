@@ -99,3 +99,86 @@ Now go to Lambda console and execute your Lambda function manually and see its o
 ```bash
 $ cdk destroy
 ```
+
+## Amazon EKS private endpoint support
+
+To support Amazon EKS private endpoint, you need to make sure:
+
+1. enable the VPC support for the Lambda function with this layer
+2. lambda function to associate with the same VPC with the Amazon EKS cluster
+3. lambda function to share the same security group with the Amaozn EKS control plane
+4. and the security group allows connection to TCP port 443 exactly from the same security group
+
+consider the following CDK sample for this scenario and see [#32](https://github.com/aws-samples/aws-lambda-layer-kubectl/issues/32) for more details.
+
+```ts
+import * as cdk from '@aws-cdk/core';
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as ec2 from '@aws-cdk/aws-ec2';
+import * as eks from '@aws-cdk/aws-eks';
+import * as iam from '@aws-cdk/aws-iam';
+import * as path from 'path';
+
+export class CdkEksDemoStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const mastersRole = new iam.Role(this, 'EksMasterRole', {
+      assumedBy: new iam.AccountRootPrincipal()
+    });
+
+    // use an existing vpc or create a new one
+    const vpc = this.node.tryGetContext('use_default_vpc') === '1' ?
+      ec2.Vpc.fromLookup(this, 'Vpc', { isDefault: true }) :
+      this.node.tryGetContext('use_vpc_id') ?
+        ec2.Vpc.fromLookup(this, 'Vpc', { vpcId: this.node.tryGetContext('use_vpc_id') }) :
+        new ec2.Vpc(this, 'Vpc', { maxAzs: 3, natGateways: 1 });
+
+    const cluster = new eks.Cluster(this, 'EksCluster', {
+      vpc,
+      mastersRole,
+      version: '1.16',
+    })
+
+    // publih a layer version from the layer.zip we built from build.sh
+    const layerVersion = new lambda.LayerVersion(this, 'cdk-aws-lambda-layer-kubectl', {
+      code: new lambda.AssetCode( path.join(__dirname, '../../layer.zip')),
+      compatibleRuntimes: [ lambda.Runtime.PROVIDED ]
+    })
+
+    // create a lambda function with this layer
+    const fn = new lambda.Function(this, 'KubectlLayerDemoFunc', {
+      code: new lambda.AssetCode(path.join(__dirname, '../../func-bundle.zip')),
+      handler: 'main',
+      runtime: lambda.Runtime.PROVIDED,
+      layers: [ layerVersion ],
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
+      environment: {
+        'cluster_name': cluster.clusterName,
+      },
+      // enable vpc support and associate with the same vpc of the eks cluster
+      vpc,
+      // sharing the same security group with the cluster control plane
+      securityGroups: cluster.connections.securityGroups,
+    })
+    
+    // allow lambda function to connect to the default port(TCP 443) of the eks control plane
+    cluster.connections.allowDefaultPortFrom(cluster.connections)
+    
+
+    // add describe cluster permission to the lambda role
+    fn.role!.addToPolicy(new iam.PolicyStatement({
+      actions: [ 'eks:DescribeCluster' ],
+      resources: [ cluster.clusterArn ]
+    }))
+    // add the lambda func role to the aws-auth config map as system:masters
+    cluster.awsAuth.addMastersRole(fn.role!)
+
+    new cdk.CfnOutput(this, 'LambdaLayerArn', { value: layerVersion.layerVersionArn })
+    new cdk.CfnOutput(this, 'LambdaFuncName', { value: fn.functionName })
+    new cdk.CfnOutput(this, 'EksClusterName', { value: cluster.clusterName })
+  }
+}
+
+```
