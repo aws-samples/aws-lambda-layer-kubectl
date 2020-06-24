@@ -13,7 +13,7 @@ ifdef INPUT_YAML
 INPUT_JSON = event.json
 endif
 AWS_PROFILE ?= default
-SEMANTIC_VERSION ?= 2.0.0-beta3
+SEMANTIC_VERSION ?= 2.0.0
 
 
 .PHONY: build 
@@ -38,15 +38,6 @@ sam-layer-package:
 	--s3-bucket $(S3BUCKET) --output-template-file sam-layer-packaged.yaml \
 	--region $(LAMBDA_REGION)
 	@echo "[OK] Now type 'make sam-layer-deploy' to deploy your Lambda layer with SAM or 'make publish-new-version-to-sar' to publish to SAR"
-
-# .PHONY: sam-layer-publish
-# sam-layer-publish:
-# 	@docker run -ti \
-# 	-v $(PWD):/home/samcli/workdir \
-# 	-v $(HOME)/.aws:/home/samcli/.aws \
-# 	-w /home/samcli/workdir \
-# 	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
-# 	pahud/aws-sam-cli:latest sam publish --region $(LAMBDA_REGION) --template sam-layer-packaged.yaml
 
 .PHONY: sam-layer-publish
 sam-layer-publish:

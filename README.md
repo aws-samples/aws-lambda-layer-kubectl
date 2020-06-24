@@ -18,10 +18,10 @@
 
 ## Current Version
 
-| kubectl      | v1.15.10-eks-bac369     |
+| kubectl      | v1.16.8-eks-e16311     |
 | :----------- | :----------- |
-| **awscli**   | **1.18.37** |
-| **helm**     | **3.1.2**    |
+| **awscli**   | **1.18.86** |
+| **helm**     | **3.2.4**    |
 | **jq**       | **1.6**      |
 | **GNU Make** | **3.82**     |
 
@@ -34,15 +34,15 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 ```
 .
 ├── awscli
-│   ├── PyYAML-5.1.2-py2.7.egg-info
+│   ├── PyYAML-5.3.1-py2.7.egg-info
 │   ├── aws
 │   ├── awscli
-│   ├── awscli-1.16.292-py2.7.egg-info
+│   ├── awscli-1.18.86-py2.7.egg-info
 │   ├── bin
 │   ├── botocore
-│   ├── botocore-1.13.28-py2.7.egg-info
+│   ├── botocore-1.17.9-py2.7.egg-info
 │   ├── colorama
-│   ├── colorama-0.4.1-py2.7.egg-info
+│   ├── colorama-0.4.3-py2.7.egg-info
 │   ├── concurrent
 │   ├── dateutil
 │   ├── docutils
@@ -51,24 +51,24 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 │   ├── easy_install.pyc
 │   ├── futures-3.3.0-py2.7.egg-info
 │   ├── jmespath
-│   ├── jmespath-0.9.4-py2.7.egg-info
+│   ├── jmespath-0.10.0-py2.7.egg-info
 │   ├── jq
 │   ├── make
 │   ├── pkg_resources
 │   ├── pyasn1
 │   ├── pyasn1-0.4.8-py2.7.egg-info
-│   ├── python_dateutil-2.8.0-py2.7.egg-info
+│   ├── python_dateutil-2.8.0.dist-info
 │   ├── rsa
 │   ├── rsa-3.4.2-py2.7.egg-info
 │   ├── s3transfer
-│   ├── s3transfer-0.2.1-py2.7.egg-info
-│   ├── six-1.13.0-py2.7.egg-info
+│   ├── s3transfer-0.3.3-py2.7.egg-info
+│   ├── six-1.15.0-py2.7.egg-info
 │   ├── six.py
 │   ├── six.pyc
 │   ├── urllib3
-│   ├── urllib3-1.25.7-py2.7.egg-info
+│   ├── urllib3-1.25.9-py2.7.egg-info
 │   ├── wheel
-│   ├── wheel-0.29.0.dist-info
+│   ├── wheel-0.33.6-py2.7.egg-info
 │   └── yaml
 ├── helm
 │   └── helm
@@ -145,7 +145,7 @@ export class AppStack extends cdk.Stack {
         const samApp = new sam.CfnApplication(this, 'SamLayer', {
           location: {
             applicationId: 'arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl',
-            semanticVersion: '2.0.0-beta3'
+            semanticVersion: '2.0.0'
           },
           parameters: {
             LayerName: `${this.stackName}-kubectl-layer`
