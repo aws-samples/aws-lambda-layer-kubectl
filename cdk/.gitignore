@@ -44,6 +44,11 @@ junit.xml
 cdk.out/
 .cdk.staging/
 .parcel-cache/
+cdk.out
+cdk.context.json
+.venv
+images
+yarn-error.log
 !/.projen/tasks.json
 !/package.json
 !/.npmignore

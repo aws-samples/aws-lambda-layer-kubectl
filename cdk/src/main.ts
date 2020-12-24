@@ -37,10 +37,11 @@ export class MyStack extends cdk.Stack {
     })
 
     // add describe cluster permission to the lambda role
-    fn.role!.addToPolicy(new iam.PolicyStatement({
-      actions: [ 'eks:DescribeCluster' ],
-      resources: [ cluster.clusterArn ]
+    fn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['eks:DescribeCluster'],
+      resources: [cluster.clusterArn]
     }))
+
     // add the lambda func role to the aws-auth config map as system:masters
     cluster.awsAuth.addMastersRole(fn.role!)
 

@@ -11,17 +11,17 @@
 
 ## Features
 
-- [x] ships all the required assests including **kubectl**, **aws-cli**, **make** and **jq** Just include the layer and you get everything required.
+- [x] ships all the required assests including **kubectl**, **AWS CLI v2**, **make** and **jq** Just include the layer and you get everything required.
 - [x] **helm 3** included.
 - [x] native support for lambda custom runtime
 
 
 ## Current Version
 
-| kubectl      | v1.16.8-eks-e16311     |
+| kubectl      | v1.18.8-eks-7c9bda     |
 | :----------- | :----------- |
-| **awscli**   | **1.18.86** |
-| **helm**     | **3.2.4**    |
+| **awscli**   | **2.1.14** |
+| **helm**     | **3.4.2**    |
 | **jq**       | **1.6**      |
 | **GNU Make** | **3.82**     |
 
@@ -34,48 +34,17 @@ You got the layer structure as below under `/opt` in lambda custom runtime:
 ```
 .
 ├── awscli
-│   ├── PyYAML-5.3.1-py2.7.egg-info
-│   ├── aws
-│   ├── awscli
-│   ├── awscli-1.18.86-py2.7.egg-info
-│   ├── bin
-│   ├── botocore
-│   ├── botocore-1.17.9-py2.7.egg-info
-│   ├── colorama
-│   ├── colorama-0.4.3-py2.7.egg-info
-│   ├── concurrent
-│   ├── dateutil
-│   ├── docutils
-│   ├── docutils-0.15.2-py2.7.egg-info
-│   ├── easy_install.py
-│   ├── easy_install.pyc
-│   ├── futures-3.3.0-py2.7.egg-info
-│   ├── jmespath
-│   ├── jmespath-0.10.0-py2.7.egg-info
+│   ├── aws -> /opt/awscli/v2/current/bin/aws
+│   ├── aws_completer -> /opt/awscli/v2/current/bin/aws_completer
 │   ├── jq
 │   ├── make
-│   ├── pkg_resources
-│   ├── pyasn1
-│   ├── pyasn1-0.4.8-py2.7.egg-info
-│   ├── python_dateutil-2.8.0.dist-info
-│   ├── rsa
-│   ├── rsa-3.4.2-py2.7.egg-info
-│   ├── s3transfer
-│   ├── s3transfer-0.3.3-py2.7.egg-info
-│   ├── six-1.15.0-py2.7.egg-info
-│   ├── six.py
-│   ├── six.pyc
-│   ├── urllib3
-│   ├── urllib3-1.25.9-py2.7.egg-info
-│   ├── wheel
-│   ├── wheel-0.33.6-py2.7.egg-info
-│   └── yaml
+│   └── v2
 ├── helm
 │   └── helm
 └── kubectl
     └── kubectl
 
-32 directories, 9 files
+4 directories, 6 files
 ```
 
 

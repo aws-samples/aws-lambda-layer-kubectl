@@ -1,73 +1,58 @@
-FROM amazonlinux:latest as builder
+# FROM public.ecr.aws/amazonlinux/amazonlinux:latest as builder
+FROM public.ecr.aws/lambda/provided:latest
 
 WORKDIR /root
 
-RUN yum update -y && yum install -y unzip make wget tar gzip
+#
+# versions
+#
+ARG KUBECTL_VERSION=1.18.8/2020-09-18
+ARG HELM_VERSION=3.4.2
 
-ADD https://s3.amazonaws.com/aws-cli/awscli-bundle.zip /root
+#
+# mkdir
+#
+RUN mkdir /opt/helm /opt/awscli /opt/kubectl
 
-RUN unzip awscli-bundle.zip && \
-    cd awscli-bundle;
-    
-#RUN ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-RUN ./awscli-bundle/install -i /opt/awscli -b /opt/awscli/aws
-  
-# install jq
-RUN wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
-&& mv jq-linux64 /opt/awscli/jq \
-&& chmod +x /opt/awscli/jq
+RUN yum update -y && yum install -y make unzip tar gzip zip
+
+# install aws cli v2 into /opt/awscli
+ADD https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip /root/awscliv2.zip
+
+RUN unzip awscliv2.zip && ./aws/install -b /opt/awscli -i /opt/awscli && \
+    rm -rf /opt/awscli/v2/current/dist/awscli/examples
+
+RUN /opt/awscli/aws --version
+
+# # install jq
+ADD https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 /opt/awscli/jq
+RUN chmod +x /opt/awscli/jq
 
 
-# download kubectl
-ADD https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl /opt/kubectl/
+# # # install kubectl into /opt/kubectl
+ADD https://amazon-eks.s3.us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/amd64/kubectl /opt/kubectl/
 RUN chmod +x /opt/kubectl/kubectl
 
-# download helm v3
-RUN mkdir -p /opt/helm && wget -qO- https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz | tar -xz -C /opt/helm/
+# # install helm v3 into /opt/helm
+ADD https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz /root/helm.tar.gz
+RUN tar xzvf /root/helm.tar.gz && mv /root/linux-amd64/helm /opt/helm/
+
 
 #
-# prepare the runtime at /opt/kubectl
-
+# copy other utils
 #
-  
-FROM lambci/lambda:provided as runtime
-
-USER root
-
-RUN yum install -y zip 
-
-#
-# awscli and other utils
-#
-COPY --from=builder /opt/awscli/lib/python2.7/site-packages/ /opt/awscli/ 
-COPY --from=builder /opt/awscli/bin/ /opt/awscli/bin/ 
-COPY --from=builder /opt/awscli/bin/aws /opt/awscli/aws
-COPY --from=builder /opt/awscli/jq /opt/awscli/jq
-COPY --from=builder /usr/bin/make /opt/awscli/make
-
-#
-# kubectl
-#
-COPY --from=builder /opt/kubectl/kubectl /opt/kubectl/kubectl
-
-#
-# helm
-#
-COPY --from=builder /opt/helm/linux-amd64/helm /opt/helm/helm
-
-
+RUN cp /usr/bin/make /opt/awscli/make
 # remove unnecessary files to reduce the size
-RUN rm -rf /opt/awscli/pip* /opt/awscli/setuptools* /opt/awscli/awscli/examples
-
+# RUN rm -rf /opt/awscli/pip* /opt/awscli/setuptools* /opt/awscli/awscli/examples
 
 # wrap it up
-RUN cd /opt; zip -r ../layer.zip *; \
-echo "/layer.zip is ready"; \
-ls -alh /layer.zip;
+RUN cd /opt; zip --symlinks -r ../layer.zip ./; \
+    echo "/layer.zip is ready"; \
+    ls -alh /layer.zip;
 
 # get the version number
-RUN grep "__version__" /opt/awscli/awscli/__init__.py | egrep -o "1.[0-9.]+" | tee /AWSCLI_VERSION
+RUN /opt/awscli/aws --version 2>&1 | tee /AWSCLI_VERSION
 RUN /opt/helm/helm version 2>&1 | tee /HELM_VERSION
 RUN /opt/kubectl/kubectl version 2>&1 | tee /KUBECTL_VERSION
 RUN /opt/awscli/jq --version  2>&1 | tee /JQ_VERSION
-RUN /opt/awscli/make --version  2>&1 | tee /MAKE_VERSION
+RUN /opt/awscli/make --version 2>&1 | tee /MAKE_VERSION
