@@ -9,3 +9,4 @@ sam-layer-packaged.yaml
 func.d/
 layer.d/
 packaged.yaml
+node_modules/
