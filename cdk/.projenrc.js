@@ -3,6 +3,7 @@ const { AwsCdkTypeScriptApp } = require('projen');
 const project = new AwsCdkTypeScriptApp({
   cdkVersion: '1.80.0',
   name: 'aws-lambda-layer-kubectl-sample',
+  defaultReleaseBranch: 'master',
   cdkDependencies: [
     '@aws-cdk/aws-lambda',
     '@aws-cdk/aws-eks',
@@ -10,12 +11,6 @@ const project = new AwsCdkTypeScriptApp({
     '@aws-cdk/aws-iam',
   ],
   dependabot: false,
-});
-
-project.addFields({
-  resolutions: {
-    netmask: '2.0.1',
-  },
 });
 
 const common_exclude = ['cdk.out', 'cdk.context.json', '.venv', 'images', 'yarn-error.log'];
