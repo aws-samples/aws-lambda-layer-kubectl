@@ -36,14 +36,15 @@ yarn-debug.log*
 yarn-error.log
 yarn-error.log*
 !/.eslintrc.json
+!/.gitattributes
 !/.github/pull_request_template.md
 !/.github/workflows/build.yml
+!/.github/workflows/upgrade-dependencies.yml
 !/.mergify.yml
 !/.npmignore
 !/.projen/deps.json
 !/.projen/tasks.json
 !/.projenrc.js
-!/.versionrc.json
 !/LICENSE
 !/cdk.json
 !/package.json
@@ -52,4 +53,3 @@ yarn-error.log*
 !/tsconfig.eslint.json
 !/tsconfig.jest.json
 !/tsconfig.json
-!version.json
