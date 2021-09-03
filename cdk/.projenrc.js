@@ -25,6 +25,10 @@ const project = new AwsCdkTypeScriptApp({
   },
 });
 
+project.package.addField('resolutions', {
+  'proxy-agent': '5.0.0'
+})
+
 const common_exclude = ['cdk.out', 'cdk.context.json', '.venv', 'images', 'yarn-error.log'];
 project.npmignore.exclude(...common_exclude);
 project.gitignore.exclude(...common_exclude);
