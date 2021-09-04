@@ -31,6 +31,6 @@ const devEnv = {
 const app = new App();
 
 new LayerStack(app, 'kubectl-layer-stack', { env: devEnv });
-new CustomLayderStack(app, 'custom-kubectl-layer-stack', { env: devEnv });
+// new CustomLayderStack(app, 'custom-kubectl-layer-stack', { env: devEnv });
 
 app.synth();
