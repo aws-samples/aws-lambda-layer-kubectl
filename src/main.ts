@@ -12,7 +12,7 @@ export class LayerStack extends Stack {
   }
 }
 
-export class CustomLayderStack extends Stack {
+export class CustomLayerStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
     super(scope, id, props);
 
@@ -31,6 +31,6 @@ const devEnv = {
 const app = new App();
 
 new LayerStack(app, 'kubectl-layer-stack', { env: devEnv });
-// new CustomLayderStack(app, 'custom-kubectl-layer-stack', { env: devEnv });
+// new CustomLayerStack(app, 'custom-kubectl-layer-stack', { env: devEnv });
 
 app.synth();
