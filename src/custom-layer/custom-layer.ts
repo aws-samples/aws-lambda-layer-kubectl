@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
-import { Construct } from 'constructs';
+import { Construct } from '@aws-cdk/core';
 
 /**
  * An AWS Lambda layer that includes `kubectl` and `helm`.

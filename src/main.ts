@@ -1,13 +1,13 @@
 import { App, CfnOutput, Construct, Stack, StackProps } from '@aws-cdk/core';
 import * as layer from '@aws-cdk/lambda-layer-kubectl';
-import * as customlayer from './custom-layer/custom-layer'
+import * as customlayer from './custom-layer/custom-layer';
 
 export class LayerStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
     super(scope, id, props);
 
     const kubectlLayer = new layer.KubectlLayer(this, 'KubectlLayer');
-    new CfnOutput(this, 'LayerVersionArn', { value: kubectlLayer.layerVersionArn })
+    new CfnOutput(this, 'LayerVersionArn', { value: kubectlLayer.layerVersionArn });
 
   }
 }
@@ -17,7 +17,7 @@ export class CustomLayderStack extends Stack {
     super(scope, id, props);
 
     const kubectlLayer = new customlayer.KubectlLayer(this, 'CustomKubectlLayer');
-    new CfnOutput(this, 'LayerVersionArn', { value: kubectlLayer.layerVersionArn })
+    new CfnOutput(this, 'LayerVersionArn', { value: kubectlLayer.layerVersionArn });
 
   }
 }

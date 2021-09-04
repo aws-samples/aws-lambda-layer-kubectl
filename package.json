@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@aws-cdk/assert": "^1.95.2",
+    "@aws-cdk/aws-lambda": "^1.95.2",
     "@aws-cdk/core": "^1.95.2",
     "@aws-cdk/lambda-layer-kubectl": "^1.95.2"
   },

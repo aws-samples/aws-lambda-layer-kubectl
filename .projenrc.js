@@ -8,6 +8,7 @@ const project = new AwsCdkTypeScriptApp({
   name: 'aws-lambda-layer-kubectl',
   cdkDependencies: [
     '@aws-cdk/lambda-layer-kubectl',
+    '@aws-cdk/aws-lambda',
   ],
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
     ignoreProjen: false,
