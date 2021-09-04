@@ -1,6 +1,5 @@
-![](https://travis-ci.org/aws-samples/aws-lambda-layer-kubectl.svg?branch=master)
-![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiNy9vYjN0bFpiN0VrdGFVOVRFL1ZHLzVLcjVsenNDcmJ0ejdIbW8raldHRzkvMGtVK1JhaUVnTk0vNWxucGdMc0JvU01JdUlNQkhpRzZqZEdPalRwL2hjPSIsIml2UGFyYW1ldGVyU3BlYyI6ImFQdnVlWmZFYi9abGhyZG8iLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
-[![](https://img.shields.io/badge/Available-serverless%20app%20repository-blue.svg)](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:903779448426:applications~lambda-layer-kubectl)
+[![build](https://github.com/aws-samples/aws-lambda-layer-kubectl/actions/workflows/build.yml/badge.svg)](https://github.com/aws-samples/aws-lambda-layer-kubectl/actions/workflows/build.yml)
+
 
 
 # lambda-layer-kubectl
@@ -45,7 +44,7 @@ kubectl-layer-stack.LayerVersionArn = arn:aws:lambda:us-east-1:123456789012:laye
 
 ## Customize your layer
 
-The [kubectlLayer](https://github.com/aws/aws-cdk/blob/6e2a3e0f855221df98f78f6465586d5524f5c7d5/packages/%40aws-cdk/lambda-layer-kubectl/lib/kubectl-layer.ts#L10-L20) from AWS CDK upstream does not allow you to pass customized Dockerfile(see the [build-in Dockerfile](https://github.com/aws/aws-cdk/blob/master/packages/%40aws-cdk/lambda-layer-kubectl/layer/Dockerfile)). To customize the layer, we simply create our own `KubectlLayer` construct class in our CDK application with our custom `Dockerfile`.
+The [kubectlLayer](https://github.com/aws/aws-cdk/blob/6e2a3e0f855221df98f78f6465586d5524f5c7d5/packages/%40aws-cdk/lambda-layer-kubectl/lib/kubectl-layer.ts#L10-L20) from AWS CDK upstream does not allow you to pass custom Dockerfile(see the [build-in Dockerfile](https://github.com/aws/aws-cdk/blob/master/packages/%40aws-cdk/lambda-layer-kubectl/layer/Dockerfile)). To customize the layer, we simply create our own `KubectlLayer` construct class in our CDK application with our custom `Dockerfile`.
 
 ```sh
 cd src/custom-layer
