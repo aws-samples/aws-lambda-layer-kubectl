@@ -23,6 +23,9 @@ cdk.out/
 .cdk.staging/
 cdk.out
 cdk.context.json
-.venv
+LICENSE
 images
 yarn-error.log
+packaged.yaml
+layer.zip
+coverage

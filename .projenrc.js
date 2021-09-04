@@ -3,14 +3,12 @@ const { AwsCdkTypeScriptApp, DependenciesUpgradeMechanism } = require('projen');
 const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
 const project = new AwsCdkTypeScriptApp({
-  cdkVersion: '1.80.0',
-  name: 'aws-lambda-layer-kubectl-sample',
+  cdkVersion: '1.95.2',
   defaultReleaseBranch: 'main',
+  name: 'aws-lambda-layer-kubectl',
   cdkDependencies: [
+    '@aws-cdk/lambda-layer-kubectl',
     '@aws-cdk/aws-lambda',
-    '@aws-cdk/aws-eks',
-    '@aws-cdk/aws-ec2',
-    '@aws-cdk/aws-iam',
   ],
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
     ignoreProjen: false,
@@ -25,12 +23,18 @@ const project = new AwsCdkTypeScriptApp({
   },
 });
 
-project.package.addField('resolutions', {
-  'proxy-agent': '5.0.0'
-})
-
-const common_exclude = ['cdk.out', 'cdk.context.json', '.venv', 'images', 'yarn-error.log'];
+const common_exclude = [
+  'cdk.out',
+  'cdk.context.json',
+  'LICENSE',
+  'images',
+  'yarn-error.log',
+  'packaged.yaml',
+  'layer.zip',
+  'coverage',
+];
 project.npmignore.exclude(...common_exclude);
 project.gitignore.exclude(...common_exclude);
+
 
 project.synth();
