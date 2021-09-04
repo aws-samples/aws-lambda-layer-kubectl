@@ -9,7 +9,6 @@
     "test:watch": "npx projen test:watch",
     "test:update": "npx projen test:update",
     "upgrade": "npx projen upgrade",
-    "upgrade-projen": "npx projen upgrade-projen",
     "default": "npx projen default",
     "eslint": "npx projen eslint",
     "synth": "npx projen synth",
@@ -39,7 +38,8 @@
   },
   "dependencies": {
     "@aws-cdk/assert": "^1.95.2",
-    "@aws-cdk/core": "^1.95.2"
+    "@aws-cdk/core": "^1.95.2",
+    "@aws-cdk/lambda-layer-kubectl": "^1.95.2"
   },
   "bundledDependencies": [],
   "license": "Apache-2.0",

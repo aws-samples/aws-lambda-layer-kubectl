@@ -1,14 +1,39 @@
-const { AwsCdkTypeScriptApp } = require('projen');
+const { AwsCdkTypeScriptApp, DependenciesUpgradeMechanism } = require('projen');
+
+const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
+
 const project = new AwsCdkTypeScriptApp({
   cdkVersion: '1.95.2',
   defaultReleaseBranch: 'main',
   name: 'aws-lambda-layer-kubectl',
-
-  // cdkDependencies: undefined,  /* Which AWS CDK modules (those that start with "@aws-cdk/") this app uses. */
-  // deps: [],                    /* Runtime dependencies of this module. */
-  // description: undefined,      /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],                 /* Build dependencies for this module. */
-  // packageName: undefined,      /* The "name" in package.json. */
-  // release: undefined,          /* Add release management to this project. */
+  cdkDependencies: [
+    '@aws-cdk/lambda-layer-kubectl',
+  ],
+  depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+    ignoreProjen: false,
+    workflowOptions: {
+      labels: ['auto-approve', 'auto-merge'],
+      secret: AUTOMATION_TOKEN,
+    },
+  }),
+  autoApproveOptions: {
+    secret: 'GITHUB_TOKEN',
+    allowedUsernames: ['pahud'],
+  },
 });
+
+const common_exclude = [
+  'cdk.out',
+  'cdk.context.json',
+  'LICENSE',
+  'images',
+  'yarn-error.log',
+  'packaged.yaml',
+  'layer.zip',
+  'coverage',
+];
+project.npmignore.exclude(...common_exclude);
+project.gitignore.exclude(...common_exclude);
+
+
 project.synth();

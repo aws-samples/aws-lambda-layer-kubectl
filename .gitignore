@@ -2,6 +2,7 @@
 !/.gitattributes
 !/.projen/tasks.json
 !/.projen/deps.json
+!/.github/workflows/auto-approve.yml
 !/.github/workflows/stale.yml
 !/package.json
 !/LICENSE
@@ -18,7 +19,6 @@ pids
 *.seed
 *.pid.lock
 lib-cov
-coverage
 *.lcov
 .nyc_output
 build/Release
@@ -49,3 +49,11 @@ cdk.out/
 .cdk.staging/
 .parcel-cache/
 !/cdk.json
+cdk.out
+cdk.context.json
+LICENSE
+images
+yarn-error.log
+packaged.yaml
+layer.zip
+coverage

@@ -21,3 +21,11 @@ tsconfig.tsbuildinfo
 /tsconfig.eslint.json
 cdk.out/
 .cdk.staging/
+cdk.out
+cdk.context.json
+LICENSE
+images
+yarn-error.log
+packaged.yaml
+layer.zip
+coverage
