@@ -10,6 +10,7 @@ const project = new AwsCdkTypeScriptApp({
     '@aws-cdk/lambda-layer-kubectl',
     '@aws-cdk/aws-lambda',
   ],
+  minNodeVersion: '14.17.0',
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
     ignoreProjen: false,
     workflowOptions: {
@@ -33,8 +34,13 @@ const common_exclude = [
   'layer.zip',
   'coverage',
 ];
+
+
+project.package.addField('resolutions', {
+  'pac-resolver': '5.0.0',
+});
+
 project.npmignore.exclude(...common_exclude);
 project.gitignore.exclude(...common_exclude);
-
 
 project.synth();
